@@ -39,7 +39,7 @@ jobs:
         run: docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$IMAGE_NAME:$IMAGE_VERSION .
 
       - name: Configure Docker Client
-        run: gcloud auth configure-docker --quiet
+        run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
 
       - name: Push Docker Image to Container Registry (GCR)
         run: docker push europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$IMAGE_NAME:$IMAGE_VERSION
