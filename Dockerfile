@@ -15,7 +15,7 @@ RUN cargo build --release --target x86_64-unknown-linux-musl --bin erp
 
 FROM alpine AS runtime
 RUN addgroup -S myuser && adduser -S myuser -G myuser
-COPY --from=builder /erp-api/target/x86_64-unknown-linux-musl/release/erp /usr/local/bin/
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/erp /usr/local/bin/
 COPY configuration configuration
 ENV APP_ENVIRONMENT production
 USER myuser
