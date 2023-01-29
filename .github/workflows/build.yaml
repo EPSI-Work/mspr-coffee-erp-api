@@ -1,0 +1,50 @@
+name: Push docker image to GCP
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+
+jobs:
+  test-api:
+    runs-on: rust:1.66
+
+    steps:
+      - name: Check syntax code
+        run: cargo check
+        
+      - name: Test Code
+        run: cargo test
+
+  build-and-push-to-artifact-registery:
+    name: Build & push
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: erp_api
+      IMAGE_VERSION: 1.0
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Google Cloud SDK
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@main
+        with:
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Authenticate to Google Cloud
+        run: |
+          echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} | base64 --decode > gcp-key.json
+          gcloud auth activate-service-account --key-file gcp-key.json
+          gcloud auth configure-docker
+        
+      - name: Build Image
+        run: docker build -t eu.gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION .
+
+      - name: Push Imagg
+        run: docker build -t eu.gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION .

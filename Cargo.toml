@@ -1,0 +1,43 @@
+[package]
+name = "erp_api"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "erp"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }
+uuid = { version = "0.8.1", features = ["v4"] }
+once_cell = "1"
+
+[dependencies]
+actix-web = "4.0.0"
+tokio = { version = "1.1.0", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1", features = ["derive"]}
+config = "0.11"
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = { version = "0.3", features = ["registry", "env-filter"] }
+tracing-bunyan-formatter = "0.3"
+tracing-log = "0.1"
+tracing-actix-web = "0.6"
+serde-aux = "3"
+secrecy = { version = "0.8", features = ["serde"] }
+reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
+
+[dependencies.sqlx]
+version = "0.5.7"
+default-features = false
+features = [
+    "runtime-actix-rustls",
+    "macros",
+    "postgres",
+    "uuid",
+    "chrono",
+    "migrate",
+    "offline"
+]
