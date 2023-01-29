@@ -26,7 +26,9 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gcloud iam service-accounts keys create key.json \
    --iam-account=$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com
 
-TODO add secret to Github Repo : GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID
+TODO add secret to Github Repo : 
+
+GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID
 
 
 
