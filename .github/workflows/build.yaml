@@ -36,10 +36,13 @@ jobs:
           credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
       - name: Build Docker Image
-        run: docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$IMAGE_NAME:$IMAGE_VERSION .
+        #run: docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$IMAGE_NAME:$IMAGE_VERSION .
+        run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/erp-api/$IMAGE_NAME:$IMAGE_VERSION .
 
       - name: Configure Docker Client
-        run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
+        #run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
+        run: gcloud auth configure-docker --quiet
 
       - name: Push Docker Image to Container Registry (GCR)
-        run: docker push europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$IMAGE_NAME:$IMAGE_VERSION
+        #run: docker push europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$IMAGE_NAME:$IMAGE_VERSION
+        run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/erp-api/$IMAGE_NAME:$IMAGE_VERSION
