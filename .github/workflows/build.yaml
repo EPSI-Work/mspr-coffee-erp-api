@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-api:
-    runs-on: rust:1.66
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
