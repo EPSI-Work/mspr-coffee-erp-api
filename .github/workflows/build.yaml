@@ -6,28 +6,69 @@ on:
   pull_request:
     branches: [main]
 
+env: 
+  RUST_VERSION: 1.67
+
 jobs:
-  test-api:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Rust
+      - name: Cache dependencies
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: 1.66
-
-      - name: Check syntax code
-        run: cargo check
-
-      - name: Audit code
-        run: cargo audit
+          profile: minimal
+          toolchain: $RUST_VERSION
+          override: true
         
-      - name: Test Code
+      - name: Run cargo test
         run: cargo test
 
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: $RUST_VERSION
+          components: rustfmt
+          override: true
+
+      - name: Run fmt 
+        run: cargo +nightly fmt --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy
+          override: true
+
+      - name: Run clippy
+        run: cargo clippy
+
+
   build-and-push-to-artifact-registery:
+    needs: [test, fmt, clippy]
     runs-on: ubuntu-latest
 
     env:

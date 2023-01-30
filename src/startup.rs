@@ -41,7 +41,8 @@ impl Application {
 pub struct ApplicationBaseUrl(pub String);
 
 // Notice the different signature!
-// We return `Server` on the happy path and we dropped the `async` keyword // We have no .await call, so it is not needed anymore.
+// We return `Server` on the happy path and we dropped the `async` keyword
+// We have no .await call, so it is not needed anymore.
 pub fn run(listener: TcpListener, base_url: String) -> Result<Server, std::io::Error> {
     let base_url = Data::new(ApplicationBaseUrl(base_url));
 
