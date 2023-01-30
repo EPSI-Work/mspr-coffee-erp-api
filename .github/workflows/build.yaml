@@ -45,7 +45,7 @@ jobs:
           override: true
 
       - name: Run fmt 
-        run: cargo +nightly fmt --all -- --check
+        run: cargo fmt --all -- --check
 
   clippy:
     name: Clippy
