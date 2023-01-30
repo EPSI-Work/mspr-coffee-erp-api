@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env: 
-  RUST_VERSION: 1.67
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -29,8 +26,8 @@ jobs:
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: 1.67
           profile: minimal
-          toolchain: $RUST_VERSION
           override: true
         
       - name: Run cargo test
@@ -43,7 +40,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: $RUST_VERSION
+          toolchain: 1.67
           components: rustfmt
           override: true
 
