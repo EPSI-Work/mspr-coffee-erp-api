@@ -1,5 +1,8 @@
 TODO init the GCP project : 
 
+PROJECT_ID=mspr-epsi-coffee
+SERVICE_ACCOUNT=github-action-sa
+
 gcloud config set project $PROJECT_ID
 
 gcloud services enable \
