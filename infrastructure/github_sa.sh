@@ -1,5 +1,5 @@
-if [[ -z "${PROJECT_ID}" || -z "${SERVICE_ACCOUNT}" ]]; then
- echo "Les variables d'environnement PROJECT_ID et SERVICE_ACCOUNT doivent être définies."
+if [[ -z "${PROJECT_ID}" || -z "${SERVICE_ACCOUNT}" || -z "${ARTIFACT_REPO_ID}" || -z "${GCP_REGION}"]]; then
+ echo "Les variables d'environnement PROJECT_ID, SERVICE_ACCOUNT, ARTIFACT_REPO_ID et GCP_REGION doivent être définies."
   exit 1
 fi
 
@@ -8,8 +8,14 @@ gcloud config set project $PROJECT_ID
 gcloud services enable \
    artifactregistry.googleapis.com \
    iamcredentials.googleapis.com \
-   containerregistry.googleapis.com \
    run.googleapis.com 
+
+
+gcloud artifacts repositories create $ARTIFACT_REPO_ID \
+    --location=$GCP_REGION \
+    --repository-format=docker \
+    --description="Artifact Repository for ERP api"
+
 
 gcloud iam service-accounts create $SERVICE_ACCOUNT \
    --display-name="GitHub Actions Service Account"
@@ -31,3 +37,5 @@ gcloud iam service-accounts keys create key.json \
 
 # export PROJECT_ID=mspr-epsi-coffee
 # export SERVICE_ACCOUNT=github-action-sa
+# export ARTIFACT_REPO_ID=erp-api
+# export GCP_REGION=europe-west9
