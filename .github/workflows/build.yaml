@@ -75,11 +75,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
-      - name: set-image-url
-        run: |
-          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-          echo $IMAGE_URL
 
       - name: Env var
         run: | 
@@ -104,6 +99,7 @@ jobs:
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: | 
+          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
           docker build -t $IMAGE_URL:latest .
           docker build -t $IMAGE_URL:$GIT_TAG .
 
@@ -111,6 +107,7 @@ jobs:
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
+          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
           docker push $IMAGE_URL:latest
           docker push $IMAGE_URL:$GIT_TAG
 
