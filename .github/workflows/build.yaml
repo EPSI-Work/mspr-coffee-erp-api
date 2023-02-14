@@ -71,7 +71,7 @@ jobs:
     env:
       REPO_NAME: 'erp-api'
       IMAGE_NAME: 'erp_api'
-      IMAGE_URL: europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
+      IMAGE_URL: europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
       CLOUD_RUN_ID: erp-api-runner
 
     steps:
