@@ -92,11 +92,13 @@ jobs:
       - name: Build Docker Image
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:latest .
-        run: docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:$GIT_TAG .
+        run: | 
+          docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:latest .
+          docker build -t europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:$GIT_TAG .
 
       - name: Push Docker Image to Container Registry (GCR)
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: docker push europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:latest
-        run: docker push europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:$GIT_TAG
+        run: |
+          docker push europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:latest
+          docker push europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME:$GIT_TAG
