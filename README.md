@@ -1,37 +1,19 @@
-TODO init the GCP project : 
 
-PROJECT_ID=mspr-epsi-coffee
-SERVICE_ACCOUNT=github-action-sa
 
-gcloud config set project $PROJECT_ID
+    
+get firebase token : 
+API_KEY=
+curl -X POST \  'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=$API_KEY' \
+  -H 'content-type: application/json' \
+  -d '{ "email":"test@test.com", "password":"testeuh", "returnSecureToken":true }'
 
-gcloud services enable \
-   artifactregistry.googleapis.com \
-   iamcredentials.googleapis.com \
-   containerregistry.googleapis.com \
-   run.googleapis.com 
+curl -X GET \
+  https://token-details-gw-dd05oxhr.uc.gateway.dev/validatetoken \
+  -H 'authorization: Bearer AUTH_TOKEN' 
 
-gcloud iam service-accounts create $SERVICE_ACCOUNT \
-   --display-name="GitHub Actions Service Account"
 
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-   --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
-   --role="roles/iam.serviceAccountUser"
-
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-   --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
-   --role="roles/run.developer"
-
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-   --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \
-   --role="roles/storage.admin"
-
-gcloud iam service-accounts keys create key.json \
-   --iam-account=$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com
 
 TODO add secret to Github Repo : 
 
 GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID
-
-
 
