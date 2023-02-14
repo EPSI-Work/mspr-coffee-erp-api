@@ -16,6 +16,10 @@ gcloud artifacts repositories create $ARTIFACT_REPO_ID \
     --repository-format=docker \
     --description="Artifact Repository for ERP api"
 
+gcloud artifacts repositories add-iam-policy-binding $ARTIFACT_REPO_ID \
+    --location=$GCP_REGION \
+    --member="serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com" \  
+    --role="roles/artifactregistry.writer"
 
 gcloud iam service-accounts create $SERVICE_ACCOUNT \
    --display-name="GitHub Actions Service Account"
@@ -39,3 +43,4 @@ gcloud iam service-accounts keys create key.json \
 # export SERVICE_ACCOUNT=github-action-sa
 # export ARTIFACT_REPO_ID=erp-api
 # export GCP_REGION=europe-west9
+
