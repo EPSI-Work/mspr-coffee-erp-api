@@ -106,7 +106,7 @@ jobs:
       #     docker push $IMAGE_URL:$GIT_TAG
 
       - name: Deploy To Cloud Run
-        run: gcloud run deploy $CLOUD_RUN_ID --image $IMAGE_URL:0.1.1 \
+        run: gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:0.1.1 \
           --min-instances=0 \
           --max-instances=1 \
           --port=8000
