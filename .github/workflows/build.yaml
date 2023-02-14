@@ -74,12 +74,12 @@ jobs:
       CLOUD_RUN_ID: erp-api-runner
 
     steps:
-      # - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # - name: Automatic Tagging of Releases
-      #   id: increment-git-tag
-      #   run: |
-      #     bash ./scripts/git_update.sh -v patch
+      - name: Automatic Tagging of Releases
+        id: increment-git-tag
+        run: |
+          bash ./scripts/git_update.sh -v patch
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -87,29 +87,31 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
-      # - name: Configure Docker Client
-      #   run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
+      - name: Configure Docker Client
+        run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
 
-      # - name: Build Docker Image
-      #   env:
-      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      #   run: | 
-      #     export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-      #     docker build -t $IMAGE_URL:latest .
-      #     docker build -t $IMAGE_URL:$GIT_TAG .
+      - name: Build Docker Image
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: | 
+          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
+          docker build -t $IMAGE_URL:latest .
+          docker build -t $IMAGE_URL:$GIT_TAG .
 
-      # - name: Push Docker Image to Container Registry (GCR)
-      #   env:
-      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      #   run: |
-      #     export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-      #     docker push $IMAGE_URL:latest
-      #     docker push $IMAGE_URL:$GIT_TAG
-
-      - name: Deploy To Cloud Run
+      - name: Push Docker Image to Container Registry (GCR)
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
           export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-          gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:v0.1.4 \
+          docker push $IMAGE_URL:latest
+          docker push $IMAGE_URL:$GIT_TAG
+
+      - name: Deploy To Cloud Run
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |
+          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
+          gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:$GIT_TAG \
             --region=europe-west9 \
             --min-instances=0 \
             --max-instances=1 \
