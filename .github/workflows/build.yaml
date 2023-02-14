@@ -107,6 +107,7 @@ jobs:
 
       - name: Deploy To Cloud Run
         run: |
+          echo $IMAGE_URL
           gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:0.1.1 \
             --region=europe-west9 \
             --min-instances=0 \
