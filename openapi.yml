@@ -11,7 +11,7 @@
           description: "Get the health status"
           operationId: "health_check"
           x-google-backend:
-            address: https://bat-api-fgqc4ti3nq-od.a.run.app
+            address: https://bat-api-fgqc4ti3nq-od.a.run.app/health_check
           responses:
             200:
               description: "Success."
