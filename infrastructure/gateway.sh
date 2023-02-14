@@ -35,4 +35,4 @@ gcloud api-gateway gateways create $GATEWAY_ID \
 # export EMAIL_SA=aimeric.sorin@gmail.com
 # export API_DEFINITION=gateway.yaml
 # export GATEWAY_ID=gateway-coffee
-# export GCP_REGION=europe-west9
+# export GCP_REGION=europe-west2

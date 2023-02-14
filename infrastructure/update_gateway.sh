@@ -14,4 +14,4 @@ gcloud api-gateway gateways update $GATEWAY_ID --api=$API_ID --api-config=$CONFI
 # export CONFIG_ID=api-config-3
 # export API_DEFINITION=gateway.yaml
 # export GATEWAY_ID=gateway-coffee
-# export GCP_REGION=europe-west9
+# export GCP_REGION=europe-west2

@@ -14,7 +14,7 @@ paths:
       summary: Call health_check endpoint
       operationId: health_check
       x-google-backend:
-        address: https://erp-api-fgqc4ti3nq-od.a.run.app/health_check
+        address: https://erp-api-runner-fgqc4ti3nq-od.a.run.app/health_check
       responses:
         '200':
           description: A successful response
