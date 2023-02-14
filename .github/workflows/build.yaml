@@ -69,18 +69,23 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REPO_NAME: erp-api
-      IMAGE_NAME: erp_api
-      IMAGE_URL: europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/"$REPO_NAME"/"$IMAGE_NAME"
+      REPO_NAME: 'erp-api'
+      IMAGE_NAME: 'erp_api'
+      IMAGE_URL: europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
       CLOUD_RUN_ID: erp-api-runner
 
     steps:
       - uses: actions/checkout@v3
       
-      - name: Automatic Tagging of Releases
-        id: increment-git-tag
-        run: |
-          bash ./scripts/git_update.sh -v patch
+      - name: Env var
+        run: | 
+          echo $REPO_NAME
+          echo $IMAGE_NAME
+          echo $IMAGE_URL
+      # - name: Automatic Tagging of Releases
+      #   id: increment-git-tag
+      #   run: |
+      #     bash ./scripts/git_update.sh -v patch
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
