@@ -76,15 +76,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Env var
-        run: | 
-          echo $REPO_NAME
-          echo $IMAGE_NAME
-          echo $IMAGE_URL
-      # - name: Automatic Tagging of Releases
-      #   id: increment-git-tag
-      #   run: |
-      #     bash ./scripts/git_update.sh -v patch
+      - name: Automatic Tagging of Releases
+        id: increment-git-tag
+        run: |
+          bash ./scripts/git_update.sh -v patch
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
