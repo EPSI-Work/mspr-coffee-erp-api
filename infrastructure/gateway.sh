@@ -13,7 +13,7 @@ gcloud services enable \
 gcloud api-gateway apis create $API_ID
 
 gcloud iam service-accounts create $SERVICE_ACCOUNT \
-   --display-name="Gateway Service Account Test"
+   --display-name="Gateway Service Account"
 
 gcloud iam service-accounts add-iam-policy-binding $SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com \
   --member user:$EMAIL_SA \
