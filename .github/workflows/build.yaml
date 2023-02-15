@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: rust:$RUST_VERSION
+      image: rust:${{ env.RUST_VERSION }}
 
     steps:
       - uses: actions/checkout@v3
@@ -29,7 +29,7 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     container:
-      image: rust:$RUST_VERSION
+      image: rust:${{ env.RUST_VERSION }}
     steps:
       - uses: actions/checkout@v3
 
@@ -43,7 +43,7 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     container:
-      image: rust:$RUST_VERSION
+      image: rust:${{ env.RUST_VERSION }}
     steps:
       - uses: actions/checkout@v3
 
@@ -57,7 +57,7 @@ jobs:
     name: Audit
     runs-on: ubuntu-latest
     container:
-      image: rust:$RUST_VERSION
+      image: rust:${{ env.RUST_VERSION }}
     steps:
       - uses: actions/checkout@v3
 
