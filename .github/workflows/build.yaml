@@ -16,9 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install tarpaulin
-        run: cargo install cargo-tarpaulin
         
       - name: Run test
         run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 95
