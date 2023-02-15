@@ -6,30 +6,21 @@ on:
   pull_request:
     branches: [main]
 
+env: 
+  RUST_VERSION: 1.67
+
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    container:
+      image: rust:$RUST_VERSION
+
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache dependencies
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: 1.67
-          profile: minimal
-          override: true
-          components: cargo-tarpaulin
+      - name: Install tarpaulin
+        run: cargo install cargo-tarpaulin
         
       - name: Run test
         run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 95
@@ -37,13 +28,13 @@ jobs:
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
+    container:
+      image: rust:$RUST_VERSION
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: 1.67
-          components: rustfmt
-          override: true
+
+      - name: Install fmt 
+        run: rustup component add rustfmt
 
       - name: Run fmt 
         run: cargo fmt --all -- --check
@@ -51,15 +42,13 @@ jobs:
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
+    container:
+      image: rust:$RUST_VERSION
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
-          override: true
+      - name: Install clippy 
+        run: rustup component add clippy
 
       - name: Run clippy
         run: cargo clippy
@@ -67,15 +56,13 @@ jobs:
   audit:
     name: Audit
     runs-on: ubuntu-latest
+    container:
+      image: rust:$RUST_VERSION
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: cargo-audit
-          override: true
+      - name: Install audit 
+        run: cargo install cargo-audit
 
       - name: Run audit
         run: cargo audit
