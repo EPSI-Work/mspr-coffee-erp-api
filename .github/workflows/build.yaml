@@ -7,65 +7,82 @@ on:
     branches: [main]
 
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - name: Cache dependencies
-  #       id: cache-dependencies
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           ~/.cargo/registry
-  #           ~/.cargo/git
-  #           target
-  #         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache dependencies
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-  #     - name: Install stable toolchain
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         toolchain: 1.67
-  #         profile: minimal
-  #         override: true
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.67
+          profile: minimal
+          override: true
+          components: cargo-tarpaulin
         
-  #     - name: Run cargo test
-  #       run: cargo test
+      - name: Run test
+        run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 95
 
-  # fmt:
-  #   name: Rustfmt
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions-rs/toolchain@v1
-  #       with:
-  #         toolchain: 1.67
-  #         components: rustfmt
-  #         override: true
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.67
+          components: rustfmt
+          override: true
 
-  #     - name: Run fmt 
-  #       run: cargo fmt --all -- --check
+      - name: Run fmt 
+        run: cargo fmt --all -- --check
 
-  # clippy:
-  #   name: Clippy
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - name: Install stable toolchain
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         toolchain: stable
-  #         components: clippy
-  #         override: true
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy
+          override: true
 
-  #     - name: Run clippy
-  #       run: cargo clippy
+      - name: Run clippy
+        run: cargo clippy
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: cargo-audit
+          override: true
+
+      - name: Run audit
+        run: cargo audit
 
 
   build-and-push-to-artifact-registery:
-    #needs: [test, fmt, clippy]
+    needs: [test, fmt, clippy, audit]
     runs-on: ubuntu-latest
 
     env:

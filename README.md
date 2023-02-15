@@ -17,3 +17,4 @@ TODO add secret to Github Repo :
 
 GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID
 
+cargo tarpaulin --out Xml --output-dir coverage
