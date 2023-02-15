@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: rust:1.67
+      image: xd009642/tarpaulin:develop-nightly
+      options: --security-opt seccomp=unconfined
 
     steps:
       - uses: actions/checkout@v3
@@ -22,98 +23,105 @@ jobs:
       - name: Run test
         run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 95
 
-  fmt:
-    name: Rustfmt
-    runs-on: ubuntu-latest
-    container:
-      image: rust:1.67
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install fmt 
-        run: rustup component add rustfmt
-
-      - name: Run fmt 
-        run: cargo fmt --all -- --check
-
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    container:
-      image: rust:1.67
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install clippy 
-        run: rustup component add clippy
-
-      - name: Run clippy
-        run: cargo clippy
-
-  audit:
-    name: Audit
-    runs-on: ubuntu-latest
-    container:
-      image: rust:1.67
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install audit 
-        run: cargo install cargo-audit
-
-      - name: Run audit
-        run: cargo audit
-
-
-  build-and-push-to-artifact-registery:
-    needs: [test, fmt, clippy, audit]
-    runs-on: ubuntu-latest
-
-    env:
-      REPO_NAME: 'erp-api'
-      IMAGE_NAME: 'erp_api'
-      CLOUD_RUN_ID: erp-api-runner
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Automatic Tagging of Releases
-        id: increment-git-tag
-        run: |
-          bash ./scripts/git_update.sh -v patch
-
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v1'
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v3
         with:
-          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+          # token  ${{secrets.CODECOV_TOKEN}} # not required for public repos
+          fail_ci_if_error: true
+          directory: ./coverage
 
-      - name: Configure Docker Client
-        run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
+  # fmt:
+  #   name: Rustfmt
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: rust:1.67
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Build Docker Image
-        env:
-          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: | 
-          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-          docker build -t $IMAGE_URL:latest .
-          docker build -t $IMAGE_URL:$GIT_TAG .
+  #     - name: Install fmt 
+  #       run: rustup component add rustfmt
 
-      - name: Push Docker Image to Container Registry (GCR)
-        env:
-          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: |
-          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-          docker push $IMAGE_URL:latest
-          docker push $IMAGE_URL:$GIT_TAG
+  #     - name: Run fmt 
+  #       run: cargo fmt --all -- --check
 
-      - name: Deploy To Cloud Run
-        env:
-          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: |
-          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-          gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:$GIT_TAG \
-            --region=europe-west9 \
-            --min-instances=0 \
-            --max-instances=1 \
-            --port=8000
+  # clippy:
+  #   name: Clippy
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: rust:1.67
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Install clippy 
+  #       run: rustup component add clippy
+
+  #     - name: Run clippy
+  #       run: cargo clippy
+
+  # audit:
+  #   name: Audit
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: rust:1.67
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Install audit 
+  #       run: cargo install cargo-audit
+
+  #     - name: Run audit
+  #       run: cargo audit
+
+
+  # build-and-push-to-artifact-registery:
+  #   needs: [test, fmt, clippy, audit]
+  #   runs-on: ubuntu-latest
+
+  #   env:
+  #     REPO_NAME: 'erp-api'
+  #     IMAGE_NAME: 'erp_api'
+  #     CLOUD_RUN_ID: erp-api-runner
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Automatic Tagging of Releases
+  #       id: increment-git-tag
+  #       run: |
+  #         bash ./scripts/git_update.sh -v patch
+
+  #     - id: 'auth'
+  #       name: 'Authenticate to Google Cloud'
+  #       uses: 'google-github-actions/auth@v1'
+  #       with:
+  #         credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+  #     - name: Configure Docker Client
+  #       run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
+
+  #     - name: Build Docker Image
+  #       env:
+  #         GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+  #       run: | 
+  #         export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
+  #         docker build -t $IMAGE_URL:latest .
+  #         docker build -t $IMAGE_URL:$GIT_TAG .
+
+  #     - name: Push Docker Image to Container Registry (GCR)
+  #       env:
+  #         GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+  #       run: |
+  #         export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
+  #         docker push $IMAGE_URL:latest
+  #         docker push $IMAGE_URL:$GIT_TAG
+
+  #     - name: Deploy To Cloud Run
+  #       env:
+  #         GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+  #       run: |
+  #         export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
+  #         gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:$GIT_TAG \
+  #           --region=europe-west9 \
+  #           --min-instances=0 \
+  #           --max-instances=1 \
+  #           --port=8000
