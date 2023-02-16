@@ -1,20 +1,47 @@
 
+Setup Firebase : 
+- create a project
+- Authentification / Add email/password auth
 
+- create Firestore database / test mode / europe
+- rules / delete : 
+    : if
+  request.time < timestamp.date(2023, 3, 17);
     
-get firebase token : 
-API_KEY=
+Get Firebase Token : 
 curl -X POST \  'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=$API_KEY' \
   -H 'content-type: application/json' \
   -d '{ "email":"test@test.com", "password":"testeuh", "returnSecureToken":true }'
 
-curl -X GET \
-  https://token-details-gw-dd05oxhr.uc.gateway.dev/validatetoken \
-  -H 'authorization: Bearer AUTH_TOKEN' 
-
-
-
-TODO add secret to Github Repo : 
-
+Add secret to Github Repo : 
 GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID
 
-cargo tarpaulin --out Xml --output-dir coverage
+import CLI:
+cargo run --bin erp-import -- --file-path import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-adminsdk-sa.json
+
+Test firestore : 
+curl -sL https://firebase.tools | bash
+(firebase login:ci)
+export GOOGLE_APPLICATION_CREDENTIALS=firebase-token.json
+FIREBASE_TOKEN=1//03sbkviJIEhE2CgYIARAAGAMSNwF-L9Ir0ZlSRWKGfzc8AuXKcttOOPkoL_EaOz-nAAe43E5pVDHA2iOy7iU0vb9LRtPgO7d_Y5E
+firebase init
+
+firebase init emulators 
+
+
+emulators:start --only firestore
+
+
+docker run -d \
+  --name firestore-emulator \
+  --env "FIRESTORE_PROJECT_ID=mspr-epsi-coffee" \
+  --env "PORT=8080" \
+  --publish 8080:8080 \
+  mtlynch/firestore-emulator-docker
+
+
+export FIRESTORE_EMULATOR_HOST=firestore_emulator:8080
+
+
+
+1//03ZkpALpe1DWyCgYIARAAGAMSNwF-L9IrbcUavCVOeNjorBhlmCEr3Axsk6JwHukGUTmLtT9PSMN3ugK-loRznmIiB_4_1119Dlg

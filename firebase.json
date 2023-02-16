@@ -1,0 +1,8 @@
+{
+  "emulators": {
+    "singleProjectMode": true,
+    "firestore": {
+      "port": "8080"
+    }
+  }
+}

@@ -2,6 +2,7 @@
 name = "erp_api"
 version = "0.1.0"
 edition = "2021"
+default-run = "erp"
 
 [lib]
 path = "src/lib.rs"
@@ -9,6 +10,10 @@ path = "src/lib.rs"
 [[bin]]
 path = "src/main.rs"
 name = "erp"
+
+[[bin]]
+path = "src/cli/main.rs"
+name = "erp-import"
 
 [dev-dependencies]
 tokio = { version = "1.25.0", features = ["rt", "macros"] }
@@ -28,3 +33,12 @@ tracing-log = "0.1.3"
 tracing-actix-web = "0.7.2"
 serde-aux = "4.1.2"
 secrecy = { version = "0.8.0", features = ["serde"] }
+firestore = "0.26.0"
+uuid = { version = "1.3.0", features = ["v4", "serde"] }
+chrono = "0.4.23"
+thiserror = "1"
+anyhow = "1"
+futures = "0.3.26"
+serde_json = "1.0.93"
+clap = { version = "4.1.6", features = ["derive"] }
+

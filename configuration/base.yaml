@@ -1,3 +1,5 @@
 application:
   port: 8000
+  firebase_project_id: mspr-epsi-coffee
+
 
