@@ -14,16 +14,14 @@ jobs:
       image: xd009642/tarpaulin:develop-nightly
       options: --security-opt seccomp=unconfined
 
+    services:
+      firestore-emulator:
+        image: mtlynch/firestore-emulator
+        env:
+          FIRESTORE_PROJECT_ID: dummy-project-id
+
     steps:
       - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Install Firebase CLI
-        run: curl -sL https://firebase.tools | bash
 
       - name: Start Emulator
         run: firebase emulators:start --only firestore --project=dummy-project-id
