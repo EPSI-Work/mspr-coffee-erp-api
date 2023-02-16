@@ -32,7 +32,6 @@ jobs:
 
       - name: Start Emulator
         run: firebase emulators:start --only firestore --project=dummy-project-id
-        background: true
         
       # - name: Run test
       #   run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 75
