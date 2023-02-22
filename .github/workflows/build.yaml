@@ -25,6 +25,7 @@ jobs:
         
       - name: Setup Firebase
         run: |
+          curl -sL https://firebase.tools | bash
           firebase emulators:start
           export FIRESTORE_EMULATOR_HOST=localhost:8080
 
