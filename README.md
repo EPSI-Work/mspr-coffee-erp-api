@@ -33,21 +33,19 @@ firebase init emulators
 emulators:start --only firestore
 
 
-cargo run --bin erp-import -- --file-path import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-adminsdk-sa.json
+cargo run --bin erp-import -- --file-path import/import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-token/firebase-adminsdk-sa.json
 
 docker run -d \
   --name firestore-emulator \
-  --env "FIRESTORE_PROJECT_ID=dummy-project-id" \
+  --env "FIRESTORE_PROJECT_ID=mspr-epsi-coffee" \
   --env "PORT=8080" \
   --publish 8080:8080 \
   mtlynch/firestore-emulator-docker
 
-export FIRESTORE_EMULATOR_HOST=localhost:8081
-export FIRESTORE_PROJECT_ID=dummy-project-id
-export PROJECT_ID=dummy-project-id
-
-
-export GOOGLE_APPLICATION_CREDENTIALS=firebase-adminsdk-sa.json
+export FIRESTORE_EMULATOR_HOST=localhost:8080
+export FIRESTORE_PROJECT_ID="mspr-epsi-coffee
+export PROJECT_ID="mspr-epsi-coffee
+export GOOGLE_APPLICATION_CREDENTIALS=firebase-token/firebase-adminsdk-sa.json
 
 
 

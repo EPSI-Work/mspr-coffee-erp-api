@@ -9,8 +9,19 @@ on:
 jobs:
   security_audit:
     runs-on: ubuntu-latest
+    container:
+      image: rust:1.67
     steps:
       - uses: actions/checkout@v3
-      - uses: taiki-e/install-action@cargo-deny
-      - name: Scan for vulnerabilities
+
+      - name: Install audit 
+        run: cargo install cargo-audit
+
+      - name: Run audit
+        run: cargo audit
+
+      - name: Install deny 
+        run: cargo install cargo-deny
+
+      - name: Run deny
         run: cargo deny check advisories
