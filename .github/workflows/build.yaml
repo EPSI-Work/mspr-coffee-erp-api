@@ -22,12 +22,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Start Emulator
-        run: firebase emulators:start --only firestore --project=dummy-project-id
         
-      # - name: Run test
-      #   run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 75
+      - name: Run test
+        run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 75
 
       # - name: Upload to codecov.io
       #   uses: codecov/codecov-action@v3

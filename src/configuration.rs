@@ -1,8 +1,10 @@
 use serde_aux::prelude::deserialize_number_from_string;
+
 // general env variable struct
 #[derive(serde::Deserialize, Clone)]
 pub struct Settings {
     pub application: ApplicationSettings,
+    pub firebase: Firebase,
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -10,7 +12,12 @@ pub struct ApplicationSettings {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
-    pub firebase_project_id: String,
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub struct Firebase {
+    pub project_id: String,
+    pub credential: String,
 }
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {

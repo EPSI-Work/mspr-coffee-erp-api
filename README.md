@@ -16,13 +16,14 @@ curl -X POST \  'https://www.googleapis.com/identitytoolkit/v3/relyingparty/veri
 Add secret to Github Repo : 
 GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID
 
-import CLI:
-cargo run --bin erp-import -- --file-path import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-adminsdk-sa.json
+
+
+
 
 Test firestore : 
 curl -sL https://firebase.tools | bash
 (firebase login:ci)
-export GOOGLE_APPLICATION_CREDENTIALS=firebase-token.json
+
 FIREBASE_TOKEN=1//03sbkviJIEhE2CgYIARAAGAMSNwF-L9Ir0ZlSRWKGfzc8AuXKcttOOPkoL_EaOz-nAAe43E5pVDHA2iOy7iU0vb9LRtPgO7d_Y5E
 firebase init
 
@@ -32,15 +33,21 @@ firebase init emulators
 emulators:start --only firestore
 
 
+cargo run --bin erp-import -- --file-path import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-adminsdk-sa.json
+
 docker run -d \
   --name firestore-emulator \
-  --env "FIRESTORE_PROJECT_ID=mspr-epsi-coffee" \
+  --env "FIRESTORE_PROJECT_ID=dummy-project-id" \
   --env "PORT=8080" \
   --publish 8080:8080 \
   mtlynch/firestore-emulator-docker
 
+export FIRESTORE_EMULATOR_HOST=localhost:8081
+export FIRESTORE_PROJECT_ID=dummy-project-id
+export PROJECT_ID=dummy-project-id
 
-export FIRESTORE_EMULATOR_HOST=firestore_emulator:8080
+
+export GOOGLE_APPLICATION_CREDENTIALS=firebase-adminsdk-sa.json
 
 
 

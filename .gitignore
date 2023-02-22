@@ -1,2 +1,4 @@
 /target
-firebase-adminsdk-sa.json
+/firebase-token
+/coverage
+/.vscode

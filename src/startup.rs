@@ -8,6 +8,7 @@ use actix_web::{
     App, HttpServer,
 };
 use firestore::*;
+use std::env::set_var;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
 
@@ -25,7 +26,13 @@ impl Application {
         );
         let listener = TcpListener::bind(address)?;
         let port = listener.local_addr().unwrap().port();
-        let firestore_database = FirestoreDb::new(&configuration.application.firebase_project_id)
+
+        // Setup Firestore
+        set_var(
+            "GOOGLE_APPLICATION_CREDENTIALS",
+            &configuration.firebase.credential,
+        );
+        let firestore_database = FirestoreDb::new(&configuration.firebase.project_id)
             .await
             .expect("Failed to setup firebase connection");
 
@@ -43,9 +50,6 @@ impl Application {
         self.server.await
     }
 }
-
-#[derive(Debug)]
-pub struct ApplicationBaseUrl(pub String);
 
 // Notice the different signature!
 // We return `Server` on the happy path and we dropped the `async` keyword

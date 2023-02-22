@@ -10,7 +10,7 @@ use futures::stream::BoxStream;
 use futures::StreamExt;
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json::to_string;
+use serde_json::{json, to_string};
 use uuid::Uuid;
 
 const COLLECTION_NAME: &'static str = "products";
@@ -86,7 +86,9 @@ pub async fn product(
         .context("Failed to get product from database.")?;
 
     match product {
-        None => Ok(HttpResponse::BadRequest().finish()),
+        None => Ok(HttpResponse::BadRequest()
+            .content_type(ContentType::json())
+            .body(json!({"message": "products not found"}).to_string())),
         Some(product) => {
             let json = to_string(&product).unwrap();
 

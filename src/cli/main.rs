@@ -3,6 +3,7 @@ use erp_api::routes::Product;
 use firestore::FirestoreDb;
 use std::env::set_var;
 use std::fs;
+use tokio::time::Instant;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -44,6 +45,6 @@ async fn main() {
             .object(&product)
             .execute()
             .await
-            .expect("Faied to insert object in firestore");
+            .expect("Failed to insert object in firestore");
     }
 }
