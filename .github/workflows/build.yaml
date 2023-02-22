@@ -14,16 +14,20 @@ jobs:
       image: xd009642/tarpaulin:develop-nightly
       options: --security-opt seccomp=unconfined
 
-    services:
-      firestore-emulator:
-        image: mtlynch/firestore-emulator
-        env:
-          FIRESTORE_PROJECT_ID: dummy-project-id
+    # services:
+    #   firestore-emulator:
+    #     image: mtlynch/firestore-emulator
+    #     env:
+    #       FIRESTORE_PROJECT_ID: dummy-project-id
 
     steps:
       - uses: actions/checkout@v3
         
-      
+      - name: Setup Firebase
+        run: |
+          firebase emulators:start
+          export FIRESTORE_EMULATOR_HOST=localhost:8080
+
       - name: Run test
         run: cargo tarpaulin --out Xml --output-dir coverage --fail-under 75
 

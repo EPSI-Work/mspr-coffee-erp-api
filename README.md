@@ -43,10 +43,12 @@ docker run -d \
   mtlynch/firestore-emulator-docker
 
 export FIRESTORE_EMULATOR_HOST=localhost:8080
-export FIRESTORE_PROJECT_ID="mspr-epsi-coffee
+<!-- export FIRESTORE_PROJECT_ID="mspr-epsi-coffee
 export PROJECT_ID="mspr-epsi-coffee
-export GOOGLE_APPLICATION_CREDENTIALS=firebase-token/firebase-adminsdk-sa.json
+export GOOGLE_APPLICATION_CREDENTIALS=firebase-token/firebase-adminsdk-sa.json -->
 
 
+firebase init
+firebase emulators:start
 
 1//03ZkpALpe1DWyCgYIARAAGAMSNwF-L9IrbcUavCVOeNjorBhlmCEr3Axsk6JwHukGUTmLtT9PSMN3ugK-loRznmIiB_4_1119Dlg
