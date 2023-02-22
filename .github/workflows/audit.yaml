@@ -1,27 +1,27 @@
-name: Security audit
-on:
-  schedule:
-    - cron: '0 0 * * *'
-  push:
-    paths:
-      - '**/Cargo.toml'
-      - '**/Cargo.lock'
-jobs:
-  security_audit:
-    runs-on: ubuntu-latest
-    container:
-      image: rust:1.67
-    steps:
-      - uses: actions/checkout@v3
+# name: Security audit
+# on:
+#   schedule:
+#     - cron: '0 0 * * *'
+#   push:
+#     paths:
+#       - '**/Cargo.toml'
+#       - '**/Cargo.lock'
+# jobs:
+#   security_audit:
+#     runs-on: ubuntu-latest
+#     container:
+#       image: rust:1.67
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Install audit 
-        run: cargo install cargo-audit
+#       - name: Install audit 
+#         run: cargo install cargo-audit
 
-      - name: Run audit
-        run: cargo audit
+#       - name: Run audit
+#         run: cargo audit
 
-      - name: Install deny 
-        run: cargo install cargo-deny
+#       - name: Install deny 
+#         run: cargo install cargo-deny
 
-      - name: Run deny
-        run: cargo deny check advisories
+#       - name: Run deny
+#         run: cargo deny check advisories

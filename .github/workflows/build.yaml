@@ -23,8 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Setup Firebase
         run: |
+          npm install -g firebase-tools
           curl -sL https://firebase.tools | bash
           firebase emulators:start
           export FIRESTORE_EMULATOR_HOST=localhost:8080
