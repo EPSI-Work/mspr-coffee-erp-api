@@ -14,7 +14,7 @@ curl -X POST \  'https://www.googleapis.com/identitytoolkit/v3/relyingparty/veri
   -d '{ "email":"test@test.com", "password":"testeuh", "returnSecureToken":true }'
 
 Add secret to Github Repo : 
-GCP_SERVICE_ACCOUNT_KEY and GCP_PROJECT_ID
+GCP_SERVICE_ACCOUNT_KEY, GCP_PROJECT_ID and FIREBASE_ADMIN_KEY
 
 
 
