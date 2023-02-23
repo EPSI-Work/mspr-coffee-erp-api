@@ -51,6 +51,7 @@ jobs:
           export FIRESTORE_EMULATOR_HOST=localhost:8080
           export GOOGLE_APPLICATION_CREDENTIALS=firebase-key.json
           npm install -g firebase-tools
+          ls -al
           firebase emulators:exec --project mspr-epsi-coffee 'cargo run --bin erp-import -- --file-path import/import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-token/firebase-adminsdk-sa.json'
 
       - name: Run test
