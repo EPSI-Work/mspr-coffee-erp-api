@@ -46,6 +46,7 @@ jobs:
       - name: Run test
         run: | 
           ls -al 
+          echo $APP__FIREBASE_CREDENTIAL
           firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
 
       - name: Archive code coverage results
