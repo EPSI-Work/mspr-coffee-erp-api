@@ -37,6 +37,7 @@ jobs:
 
       - name: Set Env
         run: | 
+          touch firebase-key.json
           echo ${{ secrets.FIREBASE_ADMIN_KEY }} | base64 -d > firebase-key.json
           export FIRESTORE_EMULATOR_HOST=localhost:8080
           export GOOGLE_APPLICATION_CREDENTIALS=firebase-key.json
