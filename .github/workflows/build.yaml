@@ -45,8 +45,7 @@ jobs:
         run: | 
           ls -al 
           export FIRESTORE_EMULATOR_HOST=localhost:8080
-          export APP__FIREBASE_CREDENTIAL=firebase-key.json
-          echo $APP__FIREBASE_CREDENTIAL
+          export APP_FIREBASE__CREDENTIAL=firebase-key.json
           firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
 
       - name: Archive code coverage results
