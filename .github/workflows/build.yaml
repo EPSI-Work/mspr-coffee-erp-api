@@ -39,13 +39,14 @@ jobs:
 
       - name: Setup Firebase
         run: |
-          ls -al
           npm install -g firebase-tools@11.23.1
           export FIRESTORE_EMULATOR_HOST=localhost:8080
           export APP__FIREBASE_CREDENTIAL=firebase-key.json
           
       - name: Run test
-        run: firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
+        run: | 
+          ls -al 
+          firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v1
