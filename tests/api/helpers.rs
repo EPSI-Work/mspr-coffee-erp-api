@@ -28,6 +28,24 @@ pub struct TestApp {
     pub db: FirestoreDb,
 }
 
+impl TestApp {
+    pub async fn get_product(&self, id: String) -> reqwest::Response {
+        reqwest::Client::new()
+            .get(&format!("{}/products/{}", &self.address, id))
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
+
+    pub async fn get_products(&self) -> reqwest::Response {
+        reqwest::Client::new()
+            .get(&format!("{}/products", &self.address))
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
+}
+
 // The function is asynchronous now!
 pub async fn spawn_app() -> TestApp {
     // The first time `initialize` is invoked the code in `TRACING` is executed.

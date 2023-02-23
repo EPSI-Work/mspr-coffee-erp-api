@@ -10,7 +10,7 @@ const COLLECTION_NAME: &'static str = "products";
 async fn get_one_product() {
     // Arrange
     let app = spawn_app().await;
-    let client = reqwest::Client::new();
+
     let product = Product {
         id: Uuid::new_v4(),
         name: "lkdjsf".to_string(),
@@ -34,18 +34,15 @@ async fn get_one_product() {
         .expect("Failed to insert product in test firestore database");
 
     // Act
-    let response = client
-        .get(&format!(
-            "{}/products/{}",
-            &app.address,
-            &product.id.to_string()
-        ))
-        .send()
-        .await
-        .expect("Failed to execute request.");
+    let response = app.get_product(product.id.to_string()).await;
 
     // Assert
-    assert!(response.status().is_success());
+    assert_eq!(response.status(), 200);
+    let body = response.text().await.expect("Failed to get body");
+    assert_eq!(
+        serde_json::from_str::<Product>(&body).expect("Failed"),
+        product
+    );
 
     // Clean
     app.db
@@ -56,6 +53,115 @@ async fn get_one_product() {
         .execute()
         .await
         .expect("Failed to delete product");
+}
 
-    //assert_eq!(response, response.content_length());
+#[tokio::test]
+async fn get_one_product_not_found() {
+    // Arrange
+    let app = spawn_app().await;
+
+    // Act
+    let response = app.get_product(Uuid::new_v4().to_string()).await;
+
+    // Assert
+    assert_eq!(response.status(), 400);
+    let body = response.text().await.expect("Failed to get body");
+    assert_ne!(
+        body.len(),
+        0,
+        "There should be a message send to the client"
+    );
+}
+
+#[tokio::test]
+async fn get_one_product_no_valid_uuid_provided() {
+    // Arrange
+    let app = spawn_app().await;
+
+    // Act
+    let response = app
+        .get_product("156e0b6c-3eb1-46a2-8a23-48a1251ef34143".to_string())
+        .await;
+
+    // Assert
+    assert_eq!(response.status(), 404);
+    let body = response.text().await.expect("Failed to get body");
+    assert_ne!(
+        body.len(),
+        0,
+        "There should be a message send to the client"
+    );
+}
+
+#[tokio::test]
+async fn get_products() {
+    // Arrange
+    let app = spawn_app().await;
+
+    let product1 = Product {
+        id: Uuid::new_v4(),
+        name: "lkdjsf".to_string(),
+        stock: 434,
+        created_at: Utc::now(),
+        details: None,
+    };
+
+    let product2 = Product {
+        id: Uuid::new_v4(),
+        name: "lkdjsf".to_string(),
+        stock: 434,
+        created_at: Utc::now(),
+        details: None,
+    };
+
+    let _: Product = app
+        .db
+        .fluent()
+        .insert()
+        .into(COLLECTION_NAME)
+        .document_id(&product1.id.to_string())
+        .object(&product1)
+        .execute()
+        .await
+        .expect("Failed to insert product in test firestore database");
+
+    let _: Product = app
+        .db
+        .fluent()
+        .insert()
+        .into(COLLECTION_NAME)
+        .document_id(&product2.id.to_string())
+        .object(&product2)
+        .execute()
+        .await
+        .expect("Failed to insert product in test firestore database");
+
+    // Act
+    let response = app.get_products().await;
+
+    // Assert
+    assert_eq!(response.status(), 200);
+    let body = response.text().await.expect("Failed to get body");
+    let expected_products = vec![product1.clone(), product2.clone()];
+    let res_products = serde_json::from_str::<Vec<Product>>(&body).expect("Failed");
+
+    assert_eq!(res_products, expected_products);
+
+    // Clean
+    app.db
+        .fluent()
+        .delete()
+        .from(COLLECTION_NAME)
+        .document_id(&product1.id.to_string())
+        .execute()
+        .await
+        .expect("Failed to delete product");
+    app.db
+        .fluent()
+        .delete()
+        .from(COLLECTION_NAME)
+        .document_id(&product2.id.to_string())
+        .execute()
+        .await
+        .expect("Failed to delete product");
 }

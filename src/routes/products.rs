@@ -58,11 +58,28 @@ pub struct Product {
     pub created_at: DateTime<Utc>,
 }
 
+impl PartialEq for Product {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+            && self.name == other.name
+            && self.details == other.details
+            && self.stock == other.stock
+            && self.created_at == other.created_at
+    }
+}
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Detail {
     pub price: f64,
     pub description: String,
     pub color: String,
+}
+
+impl PartialEq for Detail {
+    fn eq(&self, other: &Self) -> bool {
+        self.price == other.price
+            && self.description == other.description
+            && self.color == other.color
+    }
 }
 
 pub async fn products(db: web::Data<FirestoreDb>) -> Result<HttpResponse, ProductError> {
