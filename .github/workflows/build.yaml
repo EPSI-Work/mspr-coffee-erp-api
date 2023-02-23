@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: xd009642/tarpaulin:develop-nightly
+      image: xd009642/tarpaulin:develop-nightly:0.25.0-slim
       options: --security-opt seccomp=unconfined
 
     steps:
@@ -39,18 +39,31 @@ jobs:
 
       - name: Setup Firebase
         run: |
-          npm install -g firebase-tools
+          npm install -g firebase-tools@11.23.1
           export FIRESTORE_EMULATOR_HOST=localhost:8080
           export APP__FIREBASE_CREDENTIAL=firebase-key.json
           
       - name: Run test
         run: firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
 
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: code-coverage-report
+          path: coverage/cobertura.xml
+
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
           directory: ./coverage
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: coverage/cobertura.xml
 
   # fmt:
   #   name: Rustfmt
