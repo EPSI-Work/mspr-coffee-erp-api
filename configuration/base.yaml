@@ -3,5 +3,3 @@ application:
 firebase:
   project_id: mspr-epsi-coffee
   credential: firebase-token/firebase-adminsdk-sa.json
-
-
