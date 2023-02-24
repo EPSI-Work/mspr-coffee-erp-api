@@ -133,7 +133,7 @@ jobs:
           context: .
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: europe-west9-docker.pkg.dev/mspr-epsi-coffee/erp-api/erp_api:v0.1.8, europe-west9-docker.pkg.dev/mspr-epsi-coffeeerp-api/erp_api:latest
+          tags: europe-west9-docker.pkg.dev/mspr-epsi-coffee/erp-api/erp_api:v0.1.9, europe-west9-docker.pkg.dev/mspr-epsi-coffeeerp-api/erp_api:latest
 
 
       # - name: Build Docker Image
