@@ -29,20 +29,20 @@ gcloud api-gateway gateways create $GATEWAY_ID \
   --api=$API_ID  \
   --location=$GCP_REGION
 
-gcloud compute firewall-rules create $FIREWALL_ID \
-  --direction=INGRESS \
-  --priority=1000 \
-  --network=default \
-  --action=DENY \
-  --rules=all \
-  --source-ranges=0.0.0.0/0 \
-  --target-tags=$TAG \
-  --description="Deny ingress to Cloud Run from external networks"
+# gcloud compute firewall-rules create $FIREWALL_ID \
+#   --direction=INGRESS \
+#   --priority=1000 \
+#   --network=default \
+#   --action=DENY \
+#   --rules=all \
+#   --source-ranges=0.0.0.0/0 \
+#   --target-tags=$TAG \
+#   --description="Deny ingress to Cloud Run from external networks"
 
-gcloud run services update $CLOUD_RUN_ID \
-  --platform=managed \
-  --region=$CLOUD_RUN_REGION\
-  --remove-labels=$TAG=enabled
+# gcloud run services update $CLOUD_RUN_ID \
+#   --platform=managed \
+#   --region=$CLOUD_RUN_REGION\
+#   --remove-labels=$TAG=enabled
 
 
 

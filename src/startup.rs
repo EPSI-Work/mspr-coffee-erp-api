@@ -8,6 +8,7 @@ use actix_web::{
     App, HttpServer,
 };
 use firestore::*;
+use secrecy::ExposeSecret;
 use std::env::set_var;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
@@ -16,6 +17,7 @@ use tracing_actix_web::TracingLogger;
 pub struct Application {
     port: u16,
     server: Server,
+    db: FirestoreDb,
 }
 
 impl Application {
@@ -30,20 +32,26 @@ impl Application {
         // Setup Firestore
         set_var(
             "GOOGLE_APPLICATION_CREDENTIALS",
-            &configuration.firebase.credential,
+            &configuration.firebase.credential.expose_secret(),
         );
-        let firestore_database = FirestoreDb::new(&configuration.firebase.project_id)
+        let db = FirestoreDb::new(&configuration.firebase.project_id.expose_secret())
             .await
             .expect("Failed to setup firebase connection");
 
-        let server = run(listener, firestore_database)?;
+        let server = run(listener, db.clone())?;
+
         // We "save" the bound port in one of `Application`'s fields
-        Ok(Self { port, server })
+        Ok(Self { port, server, db })
+    }
+
+    pub fn db(&self) -> FirestoreDb {
+        self.db.clone()
     }
 
     pub fn port(&self) -> u16 {
         self.port
     }
+
     // A more expressive name that makes it clear that
     // this function only returns when the application is stopped.
     pub async fn run_until_stopped(self) -> Result<(), std::io::Error> {

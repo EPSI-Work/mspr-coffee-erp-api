@@ -3,7 +3,6 @@ use erp_api::startup::Application;
 use erp_api::telemetry::{get_subscriber, init_subscriber};
 use firestore::FirestoreDb;
 use once_cell::sync::Lazy;
-use std::env::set_var;
 
 // Ensure that the `tracing` stack is only initialised once using `once_cell`
 static TRACING: Lazy<()> = Lazy::new(|| {
@@ -55,15 +54,10 @@ pub async fn spawn_app() -> TestApp {
     // Randomise configuration to ensure test isolation
     let configuration = {
         let mut c = get_configuration().expect("Failed to read configuration.");
-        // Use a different database for each test case
         // Use a random OS port
         c.application.port = 0;
         c
     };
-
-    // Create and migrate the database
-
-    //configure_database(&configuration.database).await;
 
     // Launch the application as a background task
     let application = Application::build(configuration.clone())
@@ -71,15 +65,7 @@ pub async fn spawn_app() -> TestApp {
         .expect("Failed to build application.");
     let application_port = application.port();
     let address = format!("http://127.0.0.1:{}", application.port());
-
-    // Setup Firestore
-    set_var(
-        "GOOGLE_APPLICATION_CREDENTIALS",
-        configuration.firebase.credential,
-    );
-    let firestore_database = FirestoreDb::new(configuration.firebase.project_id)
-        .await
-        .expect("Failed to setup firebase connection for testing");
+    let firestore_database = application.db();
 
     // spawn app in the background
     let _ = tokio::spawn(application.run_until_stopped());

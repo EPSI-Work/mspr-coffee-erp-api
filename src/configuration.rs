@@ -1,3 +1,4 @@
+use secrecy::Secret;
 use serde_aux::prelude::deserialize_number_from_string;
 
 // general env variable struct
@@ -16,8 +17,8 @@ pub struct ApplicationSettings {
 
 #[derive(serde::Deserialize, Clone)]
 pub struct Firebase {
-    pub project_id: String,
-    pub credential: String,
+    pub project_id: Secret<String>,
+    pub credential: Secret<String>,
 }
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
@@ -46,6 +47,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
 }
 
 /// The possible runtime environment for our application.
+#[derive(PartialEq, Debug)]
 pub enum Environment {
     Local,
     Production,
@@ -72,5 +74,31 @@ impl TryFrom<String> for Environment {
                 other
             )),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_environment_as_str() {
+        assert_eq!(Environment::Local.as_str(), "local");
+        assert_eq!(Environment::Production.as_str(), "production");
+    }
+
+    #[test]
+    fn test_try_from_string() {
+        let env = Environment::try_from(String::from("local")).unwrap();
+        assert_eq!(env, Environment::Local);
+
+        let env = Environment::try_from(String::from("production")).unwrap();
+        assert_eq!(env, Environment::Production);
+
+        let err = Environment::try_from(String::from("invalid")).unwrap_err();
+        assert_eq!(
+            err,
+            "invalid is not a supported environment. Use either `local` or `production`."
+        );
     }
 }

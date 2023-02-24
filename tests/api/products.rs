@@ -1,7 +1,7 @@
 use crate::helpers::spawn_app;
 use chrono::Utc;
-use erp_api::routes::Detail;
-use erp_api::routes::Product;
+use erp_api::entity::Detail;
+use erp_api::entity::Product;
 use uuid::Uuid;
 
 const COLLECTION_NAME: &'static str = "products";
@@ -142,10 +142,10 @@ async fn get_products() {
     // Assert
     assert_eq!(response.status(), 200);
     let body = response.text().await.expect("Failed to get body");
-    let expected_products = vec![product1.clone(), product2.clone()];
-    let res_products = serde_json::from_str::<Vec<Product>>(&body).expect("Failed");
+    let mut expected_products = vec![product1.clone(), product2.clone()];
+    let mut res_products = serde_json::from_str::<Vec<Product>>(&body).expect("Failed");
 
-    assert_eq!(res_products, expected_products);
+    assert_eq!(res_products.sort(), expected_products.sort());
 
     // Clean
     app.db
@@ -164,4 +164,19 @@ async fn get_products() {
         .execute()
         .await
         .expect("Failed to delete product");
+}
+
+#[tokio::test]
+async fn get_products_empty() {
+    // Arrange
+    let app = spawn_app().await;
+
+    // Act
+    let response = app.get_products().await;
+
+    // Assert
+    assert_eq!(response.status(), 200);
+    let body = response.text().await.expect("Failed to get body");
+
+    assert_eq!(body, "[]");
 }

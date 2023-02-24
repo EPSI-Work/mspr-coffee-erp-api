@@ -1,5 +1,5 @@
 use clap::{command, Parser};
-use erp_api::routes::Product;
+use erp_api::entity::Product;
 use firestore::FirestoreDb;
 use std::env::set_var;
 use std::fs;
