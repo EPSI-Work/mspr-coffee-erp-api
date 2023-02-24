@@ -16,6 +16,7 @@ curl -X POST \  'https://www.googleapis.com/identitytoolkit/v3/relyingparty/veri
 Add secret to Github Repo : 
 GCP_SERVICE_ACCOUNT_KEY, GCP_PROJECT_ID and FIREBASE_ADMIN_KEY
 
+lock branch main
 
 
 Test firestore : 

@@ -29,7 +29,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-     
       - name: Set Credential File For Firebase
         run: | 
           echo $FIREBASE_ADMIN_KEY >> firebase-key.json
@@ -43,7 +42,6 @@ jobs:
           
       - name: Run test
         run: | 
-          ls -al 
           export FIRESTORE_EMULATOR_HOST=localhost:8080
           export APP_FIREBASE__CREDENTIAL=firebase-key.json
           firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
