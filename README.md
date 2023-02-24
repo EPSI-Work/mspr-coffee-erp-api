@@ -30,3 +30,5 @@ cargo run --bin erp-import -- --file-path import/import-products.json --firebase
 
 
 FIRESTORE_EMULATOR_HOST=localhost:8080 firebase emulators:exec 'cargo test'
+
+

@@ -9,7 +9,8 @@ gcloud services enable \
    apigateway.googleapis.com \
    servicemanagement.googleapis.com \
    servicecontrol.googleapis.com \
-   compute.googleapis.com
+   compute.googleapis.com \
+   apikeys.googleapis.com
 
 gcloud api-gateway apis create $API_ID
 
@@ -28,6 +29,14 @@ gcloud api-gateway gateways create $GATEWAY_ID \
   --api-config=$CONFIG_ID \
   --api=$API_ID  \
   --location=$GCP_REGION
+
+
+
+gcloud alpha services api-keys create --display-name="Webshop API Key" \
+  --api-target=service=$API_ID-0bs2w9fb1lddt.apigateway.$PROJECT_ID.cloud.goog
+
+gcloud services enable gateway-coffee-0bs2w9fb1lddt.apigateway.$PROJECT_ID.cloud.goog
+
 
 # gcloud compute firewall-rules create $FIREWALL_ID \
 #   --direction=INGRESS \
