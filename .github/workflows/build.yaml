@@ -129,14 +129,11 @@ jobs:
     
 
       - uses: docker/build-push-action@v2
-        env:
-          IMAGE_WITH_TAG: $IMAGE_URL:$GIT_TAG
-          IMAGE_WITH_VERSION: $IMAGE_URL:latest
         with:
           context: .
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: $IMAGE_WITH_TAG, $IMAGE_WITH_VERSION
+          tags: europe-west9-docker.pkg.dev/mspr-epsi-coffee/erp-api/erp_api:v0.1.8, europe-west9-docker.pkg.dev/mspr-epsi-coffeeerp-api/erp_api:latest
 
 
       # - name: Build Docker Image
