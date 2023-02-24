@@ -20,6 +20,7 @@ struct Args {
     firebase_token: String,
 }
 
+#[cfg(not(tarpaulin_include))]
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
