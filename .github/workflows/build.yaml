@@ -126,36 +126,14 @@ jobs:
         run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
 
 
-      - name: Create and Export Cache
-        uses: docker/setup-buildx-action@v1
-        with:
-          driver-opts: name=builder0
-        run: |
-          mkdir -p ~/.docker && echo '{"experimental": "enabled"}' > ~/.docker/config.json
-          export CACHE_NAME=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/cache
-          docker buildx build \
-            --builder builder0 \
-            --load \
-            --cache-to type=registry,ref=$CACHE_NAME \
-            --cache-from type=registry,ref=$CACHE_NAME \
-            -t $CACHE_NAME \
-            --target=production \
-            .
+    
 
-      - name: Build Docker Image
-        env:
-          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: | 
-          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-          docker buildx build \
-            --builder builder0 \
-            --load \
-            --cache-from type=registry,ref=$CACHE_NAME \
-            -t $IMAGE_URL:latest \
-            -t $IMAGE_URL:$GIT_TAG \
-            --push \
-            --target=production \
-            .
+      - uses: docker/build-push-action@v2
+        with:
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: $IMAGE_URL:$GIT_TAG, $IMAGE_URL:latest
 
 
       # - name: Build Docker Image
