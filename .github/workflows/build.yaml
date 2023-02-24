@@ -129,11 +129,14 @@ jobs:
     
 
       - uses: docker/build-push-action@v2
+        env:
+          IMAGE_WITH_TAG: $IMAGE_URL:$GIT_TAG
+          IMAGE_WITH_VERSION: $IMAGE_URL:latest
         with:
           context: .
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: $IMAGE_URL:$GIT_TAG, $IMAGE_URL:latest
+          tags: $IMAGE_WITH_TAG, $IMAGE_WITH_VERSION
 
 
       # - name: Build Docker Image
