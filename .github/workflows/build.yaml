@@ -116,6 +116,12 @@ jobs:
         run: |
           bash ./scripts/git_update.sh -v patch
 
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
       - name: Set Credential File For Firebase
         run: | 
           echo $FIREBASE_ADMIN_KEY >> firebase-key.json
