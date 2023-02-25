@@ -136,14 +136,14 @@ jobs:
             ${{ env.IMAGE_URL }}:latest
             ${{ env.IMAGE_URL }}:${{ env.GIT_TAG }}
 
-      # - name: Deploy To Cloud Run
-      #   env:
-      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      #   run: |
-      #     export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-      #     gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:$GIT_TAG \
-      #       --region=europe-west9 \
-      #       --min-instances=0 \
-      #       --max-instances=1 \
-      #       --no-allow-unauthenticated \
-      #       --port=8000
+      - name: Deploy To Cloud Run
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |
+          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
+          gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:$GIT_TAG \
+            --region=europe-west9 \
+            --min-instances=0 \
+            --max-instances=1 \
+            --no-allow-unauthenticated \
+            --port=8000
