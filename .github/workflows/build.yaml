@@ -142,7 +142,7 @@ jobs:
           cache-to: type=gha,mode=max
           tags: europe-west9-docker.pkg.dev/mspr-epsi-coffee/erp-api/erp_api:v0.1.9 
           secrets: |
-            GIT_AUTH_TOKEN='${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}''
+            GIT_AUTH_TOKEN='${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
 
       # - name: Build Docker Image
