@@ -126,7 +126,7 @@ jobs:
       - uses: docker/build-push-action@v4
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-          IMAGE_URL: europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
+          IMAGE_URL: europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
         with:
           context: .
           push: true
