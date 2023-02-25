@@ -106,7 +106,7 @@ jobs:
       REPO_NAME: 'erp-api'
       IMAGE_NAME: 'erp_api'
       CLOUD_RUN_ID: erp-api-runner
-      IMAGE_URL: ${{ secrets.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
+      IMAGE_URL: ${{ env.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
 
     steps:
       - uses: actions/checkout@v3
