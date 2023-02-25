@@ -1,10 +1,11 @@
 use crate::helpers::spawn_app;
-use chrono::Utc;
-use erp_api::entity::Detail;
+use chrono::prelude::*;
 use erp_api::entity::Product;
+use fake::Fake;
+use fake::Faker;
 use uuid::Uuid;
 
-const COLLECTION_NAME: &'static str = "products";
+const COLLECTION_NAME: &str = "products";
 
 #[tokio::test]
 async fn get_products_empty() {
@@ -25,21 +26,8 @@ async fn get_products() {
     // Arrange
     let app = spawn_app().await;
 
-    let product1 = Product {
-        id: Uuid::new_v4(),
-        name: "lkdjsf".to_string(),
-        stock: 434,
-        created_at: Utc::now(),
-        details: None,
-    };
-
-    let product2 = Product {
-        id: Uuid::new_v4(),
-        name: "lkdjsf".to_string(),
-        stock: 434,
-        created_at: Utc::now(),
-        details: None,
-    };
+    let product1: Product = Faker.fake();
+    let product2: Product = Faker.fake();
 
     let _: Product = app
         .db
@@ -101,17 +89,8 @@ async fn get_one_product() {
     // Arrange
     let app = spawn_app().await;
 
-    let product = Product {
-        id: Uuid::new_v4(),
-        name: "lkdjsf".to_string(),
-        stock: 434,
-        created_at: Utc::now(),
-        details: Some(Detail {
-            price: 43.43,
-            description: "dsf".to_string(),
-            color: "lsdkf".to_string(),
-        }),
-    };
+    let mut product: Product = Faker.fake();
+
     let _: Product = app
         .db
         .fluent()
@@ -129,10 +108,13 @@ async fn get_one_product() {
     // Assert
     assert_eq!(response.status(), 200);
     let body = response.text().await.expect("Failed to get body");
-    assert_eq!(
-        serde_json::from_str::<Product>(&body).expect("Failed"),
-        product
-    );
+
+    let mut product_return = serde_json::from_str::<Product>(&body).expect("Failed");
+
+    product_return.created_at = product_return.created_at.with_nanosecond(6).unwrap();
+    product.created_at = product.created_at.with_nanosecond(6).unwrap();
+
+    assert_eq!(product_return, product);
 
     // Clean
     app.db

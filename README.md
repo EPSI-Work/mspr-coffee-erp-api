@@ -22,13 +22,14 @@ lock branch main
 Test firestore : 
 curl -sL https://firebase.tools | bash
 firebase init
-firebase emulators:start
-emulators:start --only firestore
+firebase emulators:exec 'cargo test'
 
 
 cargo run --bin erp-import -- --file-path import/import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-token/firebase-adminsdk-sa.json
 
 
-FIRESTORE_EMULATOR_HOST=localhost:8080 firebase emulators:exec 'cargo test'
+
+
+
 
 

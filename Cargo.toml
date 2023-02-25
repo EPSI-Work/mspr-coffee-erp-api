@@ -42,4 +42,6 @@ futures = "0.3.26"
 serde_json = "1.0.93" 
 serde_with = { version ="2.2.0", features = ["json"] }
 clap = { version = "4.1.6", features = ["derive"] }
+fake = { version = "2.2", features=['derive', 'chrono', 'uuid']}
+rand = "0.8"
 

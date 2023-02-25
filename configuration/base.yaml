@@ -2,4 +2,5 @@ application:
   port: 8000
 firebase:
   project_id: mspr-epsi-coffee
-  credential: firebase-token/firebase-adminsdk-sa.json
+  credential: firebase-token/firebase-key.json
+

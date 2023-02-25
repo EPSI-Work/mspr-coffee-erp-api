@@ -19,6 +19,7 @@ pub struct ApplicationSettings {
 pub struct Firebase {
     pub project_id: Secret<String>,
     pub credential: Secret<String>,
+    pub host: String,
 }
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {

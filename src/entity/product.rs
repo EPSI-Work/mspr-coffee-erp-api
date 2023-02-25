@@ -1,10 +1,11 @@
 use chrono::{DateTime, Utc};
+use fake::{Dummy, Fake};
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 use uuid::Uuid;
 
 #[skip_serializing_none]
-#[derive(Debug, Clone, Deserialize, Serialize, PartialOrd, PartialEq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialOrd, PartialEq, Dummy)]
 pub struct Product {
     pub id: Uuid,
     pub name: String,
@@ -14,7 +15,7 @@ pub struct Product {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, PartialOrd, Dummy)]
 pub struct Detail {
     pub price: f64,
     pub description: String,
