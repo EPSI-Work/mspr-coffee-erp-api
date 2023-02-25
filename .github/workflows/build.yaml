@@ -126,12 +126,12 @@ jobs:
       #   run: gcloud auth configure-docker europe-west9-docker.pkg.dev --quiet
 
 
-      - name: Login to GAR
-        uses: docker/login-action@v2
-        with:
-          registry: europe-west9-docker.pkg.dev
-          username: _json_key
-          password: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      # - name: Login to GAR
+      #   uses: docker/login-action@v2
+      #   with:
+      #     registry: europe-west9-docker.pkg.dev
+      #     username: _json_key
+      #     password: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
     
 
       - uses: docker/build-push-action@v2
@@ -141,6 +141,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: europe-west9-docker.pkg.dev/mspr-epsi-coffee/erp-api/erp_api:v0.1.9, europe-west9-docker.pkg.dev/mspr-epsi-coffeeerp-api/erp_api:latest
+          secrets: |
+            GIT_AUTH_TOKEN=${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
 
       # - name: Build Docker Image
