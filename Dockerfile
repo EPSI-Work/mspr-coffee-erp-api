@@ -17,6 +17,7 @@ FROM alpine AS runtime
 RUN addgroup -S myuser && adduser -S myuser -G myuser
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/erp /usr/local/bin/
 COPY configuration configuration
+COPY firebase-key.json firebase-key.json
 ENV APP_ENVIRONMENT production
 USER myuser
 CMD ["/usr/local/bin/erp"]

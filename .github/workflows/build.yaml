@@ -116,6 +116,13 @@ jobs:
         run: |
           bash ./scripts/git_update.sh -v patch
 
+      - name: Set Credential File For Firebase
+        run: | 
+          echo $FIREBASE_ADMIN_KEY >> firebase-key.json
+        shell: bash
+        env:
+          FIREBASE_ADMIN_KEY : ${{secrets.FIREBASE_ADMIN_KEY}}
+
       - name: Login to GAR
         uses: docker/login-action@v2
         with:
