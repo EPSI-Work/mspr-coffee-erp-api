@@ -5,7 +5,7 @@ use std::cmp::Ordering;
 use uuid::Uuid;
 
 #[skip_serializing_none]
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Deserialize, Serialize, Eq, PartialOrd, Ord)]
 pub struct Product {
     pub id: Uuid,
     pub name: String,
@@ -15,15 +15,14 @@ pub struct Product {
     pub created_at: DateTime<Utc>,
 }
 
-// impl PartialEq for Product {
-//     fn eq(&self, other: &Self) -> bool {
-//         self.id == other.id
-//             && self.name == other.name
-//             && self.details == other.details
-//             && self.stock == other.stock
-//             && self.created_at == other.created_at
-//     }
-// }
+impl PartialEq for Product {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+            && self.name == other.name
+            && self.details == other.details
+            && self.stock == other.stock
+    }
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, PartialOrd)]
 pub struct Detail {
