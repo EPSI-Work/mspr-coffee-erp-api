@@ -106,8 +106,7 @@ jobs:
       REPO_NAME: 'erp-api'
       IMAGE_NAME: 'erp_api'
       CLOUD_RUN_ID: erp-api-runner
-      IMAGE_URL: ${{ env.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
-
+      
     steps:
       - uses: actions/checkout@v3
 
@@ -134,6 +133,7 @@ jobs:
     
       - uses: docker/build-push-action@v4
         env:
+          IMAGE_URL: ${{ env.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         with:
           context: .
@@ -152,6 +152,7 @@ jobs:
 
       - name: Deploy To Cloud Run
         env:
+          IMAGE_URL: ${{ env.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
           gcloud run deploy $CLOUD_RUN_ID --image=${{ env.IMAGE_URL }}:${{ env.GIT_TAG }} \
