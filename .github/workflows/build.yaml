@@ -102,9 +102,11 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      ARTIFACT_REGISTRY: europe-west9-docker.pkg.dev
       REPO_NAME: 'erp-api'
       IMAGE_NAME: 'erp_api'
       CLOUD_RUN_ID: erp-api-runner
+      IMAGE_URL: ${{ secrets.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
 
     steps:
       - uses: actions/checkout@v3
@@ -115,12 +117,6 @@ jobs:
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v patch
-
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v1'
-        with:
-          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
       - name: Set Credential File For Firebase
         run: | 
@@ -139,22 +135,26 @@ jobs:
       - uses: docker/build-push-action@v4
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-          IMAGE_URL: europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
         with:
           context: .
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: | 
-            ${{ env.IMAGE_URL }}:latest
             ${{ env.IMAGE_URL }}:${{ env.GIT_TAG }}
+            ${{ env.IMAGE_URL }}:latest
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
       - name: Deploy To Cloud Run
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          export IMAGE_URL=europe-west9-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/$REPO_NAME/$IMAGE_NAME
-          gcloud run deploy $CLOUD_RUN_ID --image=$IMAGE_URL:$GIT_TAG \
+          gcloud run deploy $CLOUD_RUN_ID --image=${{ env.IMAGE_URL }}:${{ env.GIT_TAG }} \
             --region=europe-west9 \
             --min-instances=0 \
             --max-instances=1 \
