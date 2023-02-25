@@ -133,8 +133,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: | 
-            $IMAGE_URL:latest
-            $IMAGE_URL:$GIT_TAG
+            ${{ env.IMAGE_URL }}:latest
+            ${{ env.IMAGE_URL }}:${{ env.GIT_TAG }}
 
       # - name: Build Docker Image
       #   env:
