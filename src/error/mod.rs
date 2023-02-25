@@ -1,2 +1,2 @@
-mod error;
-pub use error::*;
+mod api_error;
+pub use api_error::*;

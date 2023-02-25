@@ -6,7 +6,7 @@ use futures::stream::BoxStream;
 use futures::StreamExt;
 use uuid::Uuid;
 
-const COLLECTION_NAME: &'static str = "products";
+const COLLECTION_NAME: &str = "products";
 
 pub async fn get_products(db: &FirestoreDb) -> Result<Vec<Product>, FirestoreError> {
     let products_return: BoxStream<Product> = db

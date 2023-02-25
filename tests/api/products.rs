@@ -72,7 +72,10 @@ async fn get_products() {
     let mut expected_products = vec![product1.clone(), product2.clone()];
     let mut res_products = serde_json::from_str::<Vec<Product>>(&body).expect("Failed");
 
-    assert_eq!(res_products.sort(), expected_products.sort());
+    assert_eq!(
+        res_products.sort_by(|a, b| a.id.cmp(&b.id)),
+        expected_products.sort_by(|a, b| a.id.cmp(&b.id))
+    );
 
     // Clean
     app.db

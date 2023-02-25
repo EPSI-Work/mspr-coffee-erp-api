@@ -32,9 +32,9 @@ impl Application {
         // Setup Firestore
         set_var(
             "GOOGLE_APPLICATION_CREDENTIALS",
-            &configuration.firebase.credential.expose_secret(),
+            configuration.firebase.credential.expose_secret(),
         );
-        let db = FirestoreDb::new(&configuration.firebase.project_id.expose_secret())
+        let db = FirestoreDb::new(configuration.firebase.project_id.expose_secret())
             .await
             .expect("Failed to setup firebase connection");
 
