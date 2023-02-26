@@ -34,7 +34,9 @@ impl Application {
             "GOOGLE_APPLICATION_CREDENTIALS",
             configuration.firebase.credential.expose_secret(),
         );
-        set_var("FIRESTORE_EMULATOR_HOST", configuration.firebase.host);
+
+        //set_var("FIRESTORE_EMULATOR_HOST", configuration.firebase.host);
+
         let db = FirestoreDb::new(configuration.firebase.project_id.expose_secret())
             .await
             .expect("Failed to setup firebase connection");

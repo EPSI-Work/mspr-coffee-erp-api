@@ -2,13 +2,28 @@ use crate::error::APIError;
 use crate::repository::get_product;
 use crate::repository::get_products;
 use actix_web::http::header::ContentType;
+use actix_web::HttpRequest;
 use actix_web::{web, HttpResponse};
 use anyhow::Context;
 use firestore::*;
 use serde_json::{json, to_string};
 use uuid::Uuid;
 
-pub async fn products(db: web::Data<FirestoreDb>) -> Result<HttpResponse, APIError> {
+fn get_token<'a>(req: &'a HttpRequest) -> Option<&'a str> {
+    req.headers()
+        .get("x-apigateway-api-userinfo")?
+        .to_str()
+        .ok()
+}
+
+pub async fn products(
+    db: web::Data<FirestoreDb>,
+    req: HttpRequest,
+) -> Result<HttpResponse, APIError> {
+    if let Some(token) = get_token(&req) {
+        tracing::info!("x-apigateway-api-userinfo: {}", token);
+    }
+
     let products = get_products(&db)
         .await
         .context("Failed to get products from database.")?;

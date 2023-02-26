@@ -44,7 +44,7 @@ paths:
           required: true
           type: string
       x-google-backend:
-        address: https://erp-api-runner-fgqc4ti3nq-od.a.run.app/products
+        address: https://erp-api-runner-fgqc4ti3nq-od.a.run.app
         path_translation: APPEND_PATH_TO_ADDRESS
       responses:
         '200':
