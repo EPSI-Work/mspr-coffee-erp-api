@@ -21,7 +21,7 @@ pub async fn products(
     req: HttpRequest,
 ) -> Result<HttpResponse, APIError> {
     if let Some(token) = get_token(&req) {
-        tracing::info!("x-apigateway-api-userinfo: {}", token);
+        tracing::info!(token, "x-apigateway-api-userinfo Firebase Token Found");
     }
 
     let products = get_products(&db)

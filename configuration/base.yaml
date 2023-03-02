@@ -3,4 +3,6 @@ application:
 firebase:
   project_id: mspr-epsi-coffee
   credential: firebase-token/firebase-key.json
-
+logstach: 
+  host: 127.0.0.1
+  port: 50000

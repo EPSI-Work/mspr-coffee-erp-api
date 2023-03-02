@@ -6,6 +6,7 @@ use serde_aux::prelude::deserialize_number_from_string;
 pub struct Settings {
     pub application: ApplicationSettings,
     pub firebase: Firebase,
+    pub logstach: Logstach,
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -19,6 +20,14 @@ pub struct ApplicationSettings {
 pub struct Firebase {
     pub project_id: Secret<String>,
     pub credential: Secret<String>,
+    //pub host: String,
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub struct Logstach {
+    pub host: Secret<String>,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
+    pub port: u16,
     //pub host: String,
 }
 
