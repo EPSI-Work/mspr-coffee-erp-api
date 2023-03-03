@@ -141,7 +141,7 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          plateforms: linux/amd64
+          platforms: linux/amd64
           tags: |
             ${{ env.IMAGE_URL }}:${{ env.GIT_TAG }}
             ${{ env.IMAGE_URL }}:latest
