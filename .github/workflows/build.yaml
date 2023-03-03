@@ -29,6 +29,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Installer curl et sudo
+        run: |
+          apt-get update
+          apt-get install -y curl sudo
+          
       - name: install firebase
         run: curl -sL https://firebase.tools | bash
 
