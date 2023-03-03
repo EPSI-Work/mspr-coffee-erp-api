@@ -8,6 +8,9 @@ Setup Firebase :
     : if
   request.time < timestamp.date(2023, 3, 17);
     
+GitFlow : 
+branch: main, dev, ft/test
+
 Get Firebase Token : 
 curl -X POST \  'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=$API_KEY' \
   -H 'content-type: application/json' \
