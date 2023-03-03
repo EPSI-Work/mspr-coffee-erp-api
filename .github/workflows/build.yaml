@@ -29,6 +29,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: install firebase
+        run: curl -sL https://firebase.tools | bash
+
       - name: Set Credential File For Firebase
         run: | 
           echo $FIREBASE_ADMIN_KEY >> firebase-key.json
