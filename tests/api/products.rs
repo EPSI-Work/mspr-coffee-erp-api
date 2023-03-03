@@ -8,20 +8,6 @@ use uuid::Uuid;
 const COLLECTION_NAME: &str = "products";
 
 #[tokio::test]
-async fn get_products_empty() {
-    // Arrange
-    let app = spawn_app().await;
-
-    // Act
-    let response = app.get_products().await;
-
-    // Assert
-    assert_eq!(response.status(), 200);
-    let body = response.text().await.expect("Failed to get body");
-    assert_eq!(body, "[]");
-}
-
-#[tokio::test]
 async fn get_products() {
     // Arrange
     let app = spawn_app().await;
@@ -82,6 +68,14 @@ async fn get_products() {
         .execute()
         .await
         .expect("Failed to delete product");
+
+    // Act 2
+    let response = app.get_products().await;
+
+    // Assert 2
+    assert_eq!(response.status(), 200);
+    let body = response.text().await.expect("Failed to get body");
+    assert_eq!(body, "[]");
 }
 
 #[tokio::test]
