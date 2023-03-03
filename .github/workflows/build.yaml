@@ -141,7 +141,9 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ${{ env.IMAGE_URL }}:${{ env.GIT_TAG }}
+          tags: |
+            ${{ env.IMAGE_URL }}:${{ env.GIT_TAG }}
+            ${{ env.IMAGE_URL }}:latest
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
