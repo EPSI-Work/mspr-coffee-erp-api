@@ -53,19 +53,18 @@ jobs:
         env:
           FIREBASE_ADMIN_KEY : ${{secrets.FIREBASE_ADMIN_KEY}}
           
-      - name: Run test
-        run: | 
-          export FIRESTORE_EMULATOR_HOST=localhost:8080
-          export APP_FIREBASE__CREDENTIAL=firebase-key.json
-          RUST_TEST_THREADS=1 firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 50'
-          cd coverage
-          ls
+      # - name: Run test
+      #   run: | 
+      #     export FIRESTORE_EMULATOR_HOST=localhost:8080
+      #     export APP_FIREBASE__CREDENTIAL=firebase-key.json
+      #     RUST_TEST_THREADS=1 firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 50'
 
-      # - name: Upload to codecov.io
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     fail_ci_if_error: true
-      #     directory: ./coverage
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+        args: -R /
           
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
