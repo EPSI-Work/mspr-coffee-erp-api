@@ -64,7 +64,7 @@ jobs:
         with:
           fail_ci_if_error: true
           directory: ./coverage
-        args: -R /
+          args: -R /
           
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
