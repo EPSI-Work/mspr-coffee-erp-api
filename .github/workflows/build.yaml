@@ -63,8 +63,9 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
-          directory: ./coverage
-          args: -R /
+          files: ./coverage/cobertura.xml
+          verbose: true
+          root_dir: /
           
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
