@@ -1,6 +1,5 @@
-use std::sync::Arc;
-
 use crate::tcp_sink::TcpWriter;
+use std::sync::Arc;
 use std::sync::Mutex;
 use tracing::subscriber::set_global_default;
 use tracing::Level;
@@ -8,7 +7,9 @@ use tracing::Subscriber;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
 use tracing_subscriber::fmt::MakeWriter;
-use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::EnvFilter;
+use tracing_subscriber::Registry;
 
 /// Compose multiple layers into a `tracing`'s subscriber.
 ///

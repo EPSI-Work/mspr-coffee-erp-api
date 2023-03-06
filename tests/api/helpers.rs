@@ -40,9 +40,12 @@ impl TestApp {
             .expect("Failed to execute request.")
     }
 
-    pub async fn get_products(&self) -> reqwest::Response {
+    pub async fn get_products(&self, page: u64, size: u64) -> reqwest::Response {
         reqwest::Client::new()
-            .get(&format!("{}/products", &self.address))
+            .get(&format!(
+                "{}/products?page={}&size={}",
+                &self.address, page, size
+            ))
             .send()
             .await
             .expect("Failed to execute request.")

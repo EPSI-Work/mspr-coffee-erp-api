@@ -9,6 +9,7 @@ use uuid::Uuid;
 const COLLECTION_NAME: &str = "products";
 
 pub async fn get_products(db: &FirestoreDb) -> Result<Vec<Product>, FirestoreError> {
+    // add limit and offset
     let products_return: BoxStream<Product> = db
         .fluent()
         .select()

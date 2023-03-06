@@ -26,14 +26,16 @@ Test firestore :
 curl -sL https://firebase.tools | bash
 firebase init
 firebase emulators:exec 'cargo test'
-firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
+RUST_TEST_THREADS=1 firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 75'
 
 
 cargo run --bin erp-import -- --file-path import/import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-token/firebase-adminsdk-sa.json
 
 
-
-
-
-
+security : 
+cargo deny check
+cargo outdated
+cargo udeps
+cargo audit
+cargo pants
 

@@ -1,12 +1,27 @@
 use crate::helpers::spawn_app;
 use chrono::prelude::*;
+use erp_api::entity::PaginationResponse;
 use erp_api::entity::Product;
+use erp_api::routes::Pagination;
 use fake::Fake;
 use fake::Faker;
 use uuid::Uuid;
 
 const COLLECTION_NAME: &str = "products";
 
+#[tokio::test]
+async fn get_products_empty() {
+    // Arrange
+    let app = spawn_app().await;
+
+    // Act
+    let response = app.get_products(1, 10).await;
+
+    // Assert
+    assert_eq!(response.status(), 200);
+    let body = response.text().await.expect("Failed to get body");
+    assert_eq!(body, "{\"metadata\":{\"total_results\":0,\"page_size\":10,\"current_page\":1},\"results\":[],\"links\":{\"previous\":null,\"next\":null}}");
+}
 #[tokio::test]
 async fn get_products() {
     // Arrange
@@ -38,16 +53,17 @@ async fn get_products() {
         .expect("Failed to insert product in test firestore database");
 
     // Act
-    let response = app.get_products().await;
+    let response = app.get_products(1, 10).await;
 
     // Assert
     assert_eq!(response.status(), 200);
     let body = response.text().await.expect("Failed to get body");
     let mut expected_products = vec![product1.clone(), product2.clone()];
-    let mut res_products = serde_json::from_str::<Vec<Product>>(&body).expect("Failed");
+    let mut res_products =
+        serde_json::from_str::<PaginationResponse<Product>>(&body).expect("Failed");
 
     assert_eq!(
-        res_products.sort_by(|a, b| a.id.cmp(&b.id)),
+        res_products.results.sort_by(|a, b| a.id.cmp(&b.id)),
         expected_products.sort_by(|a, b| a.id.cmp(&b.id))
     );
 
@@ -68,14 +84,6 @@ async fn get_products() {
         .execute()
         .await
         .expect("Failed to delete product");
-
-    // Act 2
-    let response = app.get_products().await;
-
-    // Assert 2
-    assert_eq!(response.status(), 200);
-    let body = response.text().await.expect("Failed to get body");
-    assert_eq!(body, "[]");
 }
 
 #[tokio::test]
