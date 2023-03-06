@@ -58,6 +58,8 @@ jobs:
           export FIRESTORE_EMULATOR_HOST=localhost:8080
           export APP_FIREBASE__CREDENTIAL=firebase-key.json
           RUST_TEST_THREADS=1 firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 50'
+          cd coverage
+          ls
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
