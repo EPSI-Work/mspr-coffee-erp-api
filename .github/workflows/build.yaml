@@ -64,6 +64,7 @@ jobs:
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
         with:
+          version: "v0.1.15"
           fail_ci_if_error: true
           directory: ./coverage
           
