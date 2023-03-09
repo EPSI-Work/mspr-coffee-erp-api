@@ -2,3 +2,5 @@ application:
   host: 0.0.0.0
 firebase:
   credential: firebase-key.json
+cloudfunction:
+  host: https://europe-west1-mspr-epsi-coffee.cloudfunctions.net

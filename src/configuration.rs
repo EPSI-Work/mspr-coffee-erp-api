@@ -7,6 +7,7 @@ pub struct Settings {
     pub application: ApplicationSettings,
     pub firebase: Firebase,
     pub logstach: Logstach,
+    pub cloudfunction: CloudFunction,
 }
 
 #[derive(serde::Deserialize, Clone)]
@@ -29,6 +30,11 @@ pub struct Logstach {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     //pub host: String,
+}
+
+#[derive(serde::Deserialize, Clone)]
+pub struct CloudFunction {
+    pub host: Secret<String>,
 }
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {

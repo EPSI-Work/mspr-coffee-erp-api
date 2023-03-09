@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct PaginationMetadata {
-    pub total_results: u64,
-    pub page_size: u64,
-    pub current_page: u64,
+    pub total_results: u32,
+    pub page_size: u32,
+    pub current_page: u32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -22,9 +22,9 @@ pub struct PaginationLinks {
 
 pub fn generate_pagination_response<T>(
     results: Vec<T>,
-    total_results: u64,
-    current_page: u64,
-    page_size: u64,
+    total_results: u32,
+    current_page: u32,
+    page_size: u32,
     base_url: &str,
 ) -> PaginationResponse<T> {
     let mut links = PaginationLinks {
@@ -33,7 +33,7 @@ pub fn generate_pagination_response<T>(
     };
 
     // Calculate total number of pages
-    let total_pages = (total_results as f64 / page_size as f64).ceil() as u64;
+    let total_pages = (total_results as f64 / page_size as f64).ceil() as u32;
 
     // Check if there's a previous page
     if current_page > 1 {

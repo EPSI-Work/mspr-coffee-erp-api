@@ -6,3 +6,5 @@ firebase:
 logstach: 
   host: 127.0.0.1
   port: 50000
+cloudfunction:
+  host: localhost:10000

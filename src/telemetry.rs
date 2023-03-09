@@ -73,7 +73,7 @@ where
 {
     let env_filter =
         EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(env_filter.as_str()));
-    let file_layer = BunyanFormattingLayer::new(name.clone(), sink);
+    let file_layer = BunyanFormattingLayer::new(name, sink);
 
     Registry::default()
         .with(env_filter)
