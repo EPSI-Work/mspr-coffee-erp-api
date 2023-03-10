@@ -77,6 +77,8 @@ async fn check_authorization(
         .await
         .context("Failed to get body from firebase token")?;
 
+    tracing::info!(body);
+
     let firebase_user =
         serde_json::from_str::<FirebaseUser>(&body).context("Failed to parse json")?;
 
