@@ -26,7 +26,7 @@ async fn get_products_empty() {
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user.uid = user_firestore.firebase_id;
 
-    Mock::given(path("/api/auth/v1/verifyToken"))
+    Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
         .mount(&app.cloud_function_server)
@@ -55,7 +55,7 @@ async fn get_products() {
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user.uid = user_firestore.firebase_id;
 
-    Mock::given(path("/api/auth/v1/verifyToken"))
+    Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
         .mount(&app.cloud_function_server)
@@ -93,7 +93,7 @@ async fn get_one_product() {
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user.uid = user_firestore.firebase_id;
 
-    Mock::given(path("/api/auth/v1/verifyToken"))
+    Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
         .mount(&app.cloud_function_server)
@@ -132,7 +132,7 @@ async fn get_one_product_not_found() {
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user.uid = user_firestore.firebase_id;
 
-    Mock::given(path("/api/auth/v1/verifyToken"))
+    Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
         .mount(&app.cloud_function_server)
@@ -169,7 +169,7 @@ async fn get_one_product_no_valid_uuid_provided() {
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user.uid = user_firestore.firebase_id;
 
-    Mock::given(path("/api/auth/v1/verifyToken"))
+    Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
         .mount(&app.cloud_function_server)
