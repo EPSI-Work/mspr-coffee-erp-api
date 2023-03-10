@@ -161,20 +161,20 @@ jobs:
             ${{ env.IMAGE_URL }}:${{ env.GIT_TAG }}
             ${{ env.IMAGE_URL }}:latest
 
-  #     - id: 'auth'  
-  #       name: 'Authenticate to Google Cloud'
-  #       uses: 'google-github-actions/auth@v1'
-  #       with:
-  #         credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+      - id: 'auth'  
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
-  #     - name: Deploy To Cloud Run
-  #       env:
-  #         IMAGE_URL: ${{ env.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
-  #         GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-  #       run: |
-  #         gcloud run deploy $CLOUD_RUN_ID --image=${{ env.IMAGE_URL }}:${{ env.GIT_TAG }} \
-  #           --region=europe-west9 \
-  #           --min-instances=0 \
-  #           --max-instances=1 \
-  #           --no-allow-unauthenticated \
-  #           --port=8000
+      - name: Deploy To Cloud Run
+        env:
+          IMAGE_URL: ${{ env.ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |
+          gcloud run deploy $CLOUD_RUN_ID --image=${{ env.IMAGE_URL }}:${{ env.GIT_TAG }} \
+            --region=europe-west9 \
+            --min-instances=0 \
+            --max-instances=1 \
+            --no-allow-unauthenticated \
+            --port=8000
