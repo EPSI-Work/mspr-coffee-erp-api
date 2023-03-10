@@ -36,3 +36,22 @@ cargo udeps
 cargo audit
 cargo pants
 
+
+
+
+ // let file_appender = tracing_appender::rolling::hourly("logs", "log");
+    // let (file_sink, _guard) = tracing_appender::non_blocking(file_appender);
+
+    // let subscriber = get_subscriber_with_elk(
+    //     "zero2prod".into(),
+    //     Level::INFO.into(),
+    //     std::io::stdout,
+    //     (
+    //         configuration.logstach.host.expose_secret().to_string(),
+    //         configuration.logstach.port,
+    //     ),
+    // );
+
+    // let tracer = stdout::new_pipeline().install_simple();
+    // // Create a tracing layer with the configured tracer
+    // let telemetry = tracing_opentelemetry::layer::<_>().with_tracer(tracer);

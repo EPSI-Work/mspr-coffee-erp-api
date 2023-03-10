@@ -80,7 +80,6 @@ async fn check_authorization(
         .context("Failed to verify firebase token")?;
 
     dbg!(&response);
-    dbg!(&response.text().await);
 
     let body = response
         .text()

@@ -25,43 +25,43 @@ use tracing_subscriber::Registry;
 // name is the name of the subscriber
 // env_filter is the level of log (INFO, TRACE ...)
 // sink is where the output is redirected
-pub fn get_subscriber_with_elk<Sink>(
-    name: String,
-    env_filter: Level,
-    sink: Sink,
-    elk_adress: (String, u16),
-) -> impl Subscriber + Sync + Send
-where
-    // This "weird" syntax is a higher-ranked trait bound (HRTB)
-    // It basically means that Sink implements the `MakeWriter`
-    // trait for all choices of the lifetime parameter `'a`
-    // Check out https://doc.rust-lang.org/nomicon/hrtb.html
-    // for more details.
-    Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static,
-{
-    let elk_adress_string = format!("{}:{}", elk_adress.0, elk_adress.1);
-    let tcp_writer = TcpWriter::new(elk_adress_string).unwrap();
-    let writer_mutex = Arc::new(Mutex::new(tcp_writer));
-    let writer_closure = move || {
-        writer_mutex
-            .lock()
-            .unwrap()
-            .stream
-            .try_clone()
-            .expect("Failed to get TCP Stream")
-    };
+// pub fn get_subscriber_with_elk<Sink>(
+//     name: String,
+//     env_filter: Level,
+//     sink: Sink,
+//     elk_adress: (String, u16),
+// ) -> impl Subscriber + Sync + Send
+// where
+//     // This "weird" syntax is a higher-ranked trait bound (HRTB)
+//     // It basically means that Sink implements the `MakeWriter`
+//     // trait for all choices of the lifetime parameter `'a`
+//     // Check out https://doc.rust-lang.org/nomicon/hrtb.html
+//     // for more details.
+//     Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static,
+// {
+//     let elk_adress_string = format!("{}:{}", elk_adress.0, elk_adress.1);
+//     let tcp_writer = TcpWriter::new(elk_adress_string).unwrap();
+//     let writer_mutex = Arc::new(Mutex::new(tcp_writer));
+//     let writer_closure = move || {
+//         writer_mutex
+//             .lock()
+//             .unwrap()
+//             .stream
+//             .try_clone()
+//             .expect("Failed to get TCP Stream")
+//     };
 
-    let env_filter =
-        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(env_filter.as_str()));
-    let file_layer = BunyanFormattingLayer::new(name.clone(), sink);
-    let elk_layer = BunyanFormattingLayer::new(name, writer_closure);
+//     let env_filter =
+//         EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(env_filter.as_str()));
+//     let file_layer = BunyanFormattingLayer::new(name.clone(), sink);
+//     let elk_layer = BunyanFormattingLayer::new(name, writer_closure);
 
-    Registry::default()
-        .with(env_filter)
-        .with(JsonStorageLayer)
-        .with(file_layer)
-        .with(elk_layer)
-}
+//     Registry::default()
+//         .with(env_filter)
+//         .with(JsonStorageLayer)
+//         .with(file_layer)
+//         .with(elk_layer)
+// }
 
 pub fn get_subscriber_without_elk<Sink>(
     name: String,
