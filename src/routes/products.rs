@@ -67,13 +67,20 @@ async fn check_authorization(
         firebase_token: token,
     };
 
+    let path = format!("{}/auth/v1/verifyToken", cloud_function.host);
+
+    tracing::info!(path);
+
     // verify firebase token
     let response = reqwest::Client::new()
-        .post(format!("{}/auth/v1/verifyToken", cloud_function.host))
+        .post(path)
         .json(&firebase_credentials)
         .send()
         .await
         .context("Failed to verify firebase token")?;
+
+    dbg!(&response);
+    dbg!(&response.text().await);
 
     let body = response
         .text()
