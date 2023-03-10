@@ -1,4 +1,4 @@
-use crate::entity::{generate_pagination_response, Product};
+use crate::entity::{generate_pagination_response, Product, Reseller};
 use crate::error::APIError;
 use crate::repository::get_products;
 use crate::repository::get_reseller;
@@ -55,26 +55,15 @@ fn get_firebase_token(req: &HttpRequest) -> Option<&str> {
         .unwrap_or_else(|| None)
 }
 
-pub async fn products(
-    db: web::Data<FirestoreDb>,
-    req: HttpRequest,
-    pagination: web::Query<Pagination>,
-    api_key: web::Query<APIKey>,
-    cloud_function: web::Data<CloudFunction>,
-    _: RequestId,
-) -> Result<HttpResponse, APIError> {
-    let token = get_firebase_token(&req);
-
-    if token.is_none() {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("token firebase not found"));
-    }
-
+async fn check_authorization(
+    api_key: String,
+    token: String,
+    db: &FirestoreDb,
+    cloud_function: &CloudFunction,
+) -> Result<Reseller, anyhow::Error> {
     let firebase_credentials = VerifyFirebaseToken {
-        firebase_token: token.unwrap().to_string(),
+        firebase_token: token,
     };
-
     // verify firebase token
     let response = reqwest::Client::new()
         .post(format!("{}/api/auth/v1/verifyToken", cloud_function.host))
@@ -92,42 +81,45 @@ pub async fn products(
         serde_json::from_str::<FirebaseUser>(&body).context("Failed to parse json")?;
 
     // check if the reseller with the given api key exist
-    let reseller = get_reseller(&db, &api_key.api_key)
+    let reseller = get_reseller(&db, &api_key)
         .await
         .context("Failed to get products from database.")?;
 
-    if reseller.is_none() {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("not reseller found with this api_key"));
-    }
-
-    tracing::info!("Reseller with the api key is found");
-
-    let reseller = reseller.unwrap();
+    let reseller = reseller.context("No reseller found")?;
 
     // check if the user has a reseller
     let user = get_user(&db, &firebase_user.user.uid, &reseller)
         .await
         .context("Failed to get products from database.")?;
 
-    if user.is_none() {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("user has not associtated reseller"));
+    let user = user.context("No user found")?;
+
+    if reseller.id != user.reseller_id {
+        return Err(anyhow::anyhow!("the reseller id doesn't match"));
     }
+    Ok(reseller)
+}
 
-    tracing::info!("User is found");
+pub async fn products(
+    db: web::Data<FirestoreDb>,
+    req: HttpRequest,
+    pagination: web::Query<Pagination>,
+    api_key: web::Query<APIKey>,
+    cloud_function: web::Data<CloudFunction>,
+    _: RequestId,
+) -> Result<HttpResponse, APIError> {
+    let token = get_firebase_token(&req);
 
-    if reseller.id != user.unwrap().reseller_id {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("bad api key"));
-    }
+    let token = token.context("No token found")?;
 
-    // check if the user reseller_id and the reseller_id for the given api_key match
-    // if(reseller.unwrap().)
-
+    let reseller = check_authorization(
+        api_key.api_key.to_string(),
+        token.to_string(),
+        &db,
+        &cloud_function,
+    )
+    .await
+    .map_err(APIError::AuthorizationError)?;
     let products = get_products(&db, &reseller)
         .await
         .context("Failed to get products from database.")?;
@@ -158,61 +150,15 @@ pub async fn product(
 ) -> Result<HttpResponse, APIError> {
     let token = get_firebase_token(&req);
 
-    if token.is_none() {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("token firebase not found"));
-    }
+    let token = token.context("No token found")?;
 
-    let firebase_credentials = VerifyFirebaseToken {
-        firebase_token: token.unwrap().to_string(),
-    };
-
-    // verify firebase token
-    let response = reqwest::Client::new()
-        .post(format!("{}/api/auth/v1/verifyToken", cloud_function.host))
-        .json(&firebase_credentials)
-        .send()
-        .await
-        .context("Failed to verify firebase token")?;
-
-    let body = response
-        .text()
-        .await
-        .context("Failed to get body from firebase token")?;
-
-    let firebase_user =
-        serde_json::from_str::<FirebaseUser>(&body).context("Failed to parse json")?;
-
-    // check if the reseller with the given api key exist
-    let reseller = get_reseller(&db, &api_key.api_key)
-        .await
-        .context("Failed to get products from database.")?;
-
-    if reseller.is_none() {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("not reseller found with this api_key"));
-    }
-
-    let reseller = reseller.unwrap();
-
-    // check if the user has a reseller
-    let user = get_user(&db, &firebase_user.user.uid, &reseller)
-        .await
-        .context("Failed to get products from database.")?;
-
-    if user.is_none() {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("user has not associtated reseller"));
-    }
-
-    if reseller.id != user.unwrap().reseller_id {
-        return Ok(HttpResponse::BadRequest()
-            .content_type(ContentType::json())
-            .body("bad api key"));
-    }
+    let reseller = check_authorization(
+        api_key.api_key.to_string(),
+        token.to_string(),
+        &db,
+        &cloud_function,
+    )
+    .await?;
 
     let product = get_product(&db, *id, &reseller)
         .await

@@ -1,18 +1,21 @@
 use actix_web::http::StatusCode;
-use actix_web::ResponseError;
+use actix_web::{HttpResponse, ResponseError};
 
 #[cfg(not(tarpaulin_include))]
 #[derive(thiserror::Error)]
 pub enum APIError {
+    #[error("Authentication failed.")]
+    AuthorizationError(#[source] anyhow::Error),
     #[error(transparent)]
     UnexpectedError(#[from] anyhow::Error),
 }
 
 #[cfg(not(tarpaulin_include))]
 impl ResponseError for APIError {
-    fn status_code(&self) -> StatusCode {
+    fn error_response(&self) -> HttpResponse {
         match self {
-            APIError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            APIError::UnexpectedError(_) => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
+            APIError::AuthorizationError(_) => HttpResponse::new(StatusCode::FORBIDDEN),
         }
     }
 }
