@@ -6,3 +6,5 @@ mod reseller;
 pub use reseller::*;
 mod user;
 pub use user::*;
+mod firebase_user;
+pub use firebase_user::*;

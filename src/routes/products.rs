@@ -1,32 +1,18 @@
-use crate::entity::{generate_pagination_response, Product, Reseller};
+use crate::entity::{generate_pagination_response, FirebaseUser, Product, Reseller};
 use crate::error::APIError;
 use crate::repository::get_products;
 use crate::repository::get_reseller;
 use crate::repository::{get_product, get_user};
-use crate::startup::CloudFunction;
 use actix_web::http::header::ContentType;
 use actix_web::HttpRequest;
 use actix_web::{web, HttpResponse};
 use anyhow::Context;
 use base64::decode;
-use fake::{Dummy, Fake};
 use firestore::*;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::{json, to_string};
 use tracing_actix_web::RequestId;
 use uuid::Uuid;
-
-// #[derive(Serialize, Deserialize, Debug, Dummy)]
-// pub struct FirebaseUser {
-//     pub user: User,
-// }
-
-#[derive(Serialize, Deserialize, Debug, Dummy)]
-pub struct FirebaseUser {
-    pub user_id: String,
-    pub email: String,
-    pub email_verified: bool,
-}
 
 #[derive(Deserialize, Debug)]
 pub struct Pagination {
@@ -37,12 +23,6 @@ pub struct Pagination {
 #[derive(Deserialize, Debug)]
 pub struct APIKey {
     pub api_key: String,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-pub struct VerifyFirebaseToken {
-    #[serde(rename = "firebaseToken")]
-    pub firebase_token: String,
 }
 
 fn get_firebase_token(req: &HttpRequest) -> Option<&str> {
@@ -56,42 +36,12 @@ async fn check_authorization(
     api_key: String,
     token: String,
     db: &FirestoreDb,
-    cloud_function: &CloudFunction,
 ) -> Result<Reseller, anyhow::Error> {
-    tracing::info!(token);
-
-    // let firebase_credentials = VerifyFirebaseToken {
-    //     firebase_token: token,
-    // };
-
-    // let path = format!("{}/auth/v1/verifyToken", cloud_function.host);
-
-    // tracing::info!(path);
-
-    // // verify firebase token
-    // let response = reqwest::Client::new()
-    //     .post(path)
-    //     .json(&firebase_credentials)
-    //     .send()
-    //     .await
-    //     .context("Failed to verify firebase token")?;
-
-    // dbg!(&response);
-
-    // let body = response
-    //     .text()
-    //     .await
-    //     .context("Failed to get body from firebase token")?;
-
-    // tracing::info!(body);
-
     let decoded_bytes = decode(&token).context("Impossible de décoder la chaîne Base64")?; // Décodage de la chaîne Base64
 
     let decoded_string =
         String::from_utf8(decoded_bytes).context("Les octets décodés ne sont pas valides UTF-8")?;
 
-    dbg!(&token);
-    dbg!(&decoded_string);
     let firebase_user =
         serde_json::from_str::<FirebaseUser>(&decoded_string).context("Failed to parse json")?;
 
@@ -120,7 +70,6 @@ pub async fn products(
     req: HttpRequest,
     pagination: web::Query<Pagination>,
     api_key: web::Query<APIKey>,
-    cloud_function: web::Data<CloudFunction>,
     _: RequestId,
 ) -> Result<HttpResponse, APIError> {
     let token = get_firebase_token(&req);
@@ -129,14 +78,9 @@ pub async fn products(
 
     tracing::info!(token);
 
-    let reseller = check_authorization(
-        api_key.api_key.to_string(),
-        token.to_string(),
-        &db,
-        &cloud_function,
-    )
-    .await
-    .map_err(APIError::AuthorizationError)?;
+    let reseller = check_authorization(api_key.api_key.to_string(), token.to_string(), &db)
+        .await
+        .map_err(APIError::AuthorizationError)?;
     let products = get_products(&db, &reseller)
         .await
         .context("Failed to get products from database.")?;
@@ -162,20 +106,13 @@ pub async fn product(
     req: HttpRequest,
     id: web::Path<Uuid>,
     api_key: web::Query<APIKey>,
-    cloud_function: web::Data<CloudFunction>,
     _: RequestId,
 ) -> Result<HttpResponse, APIError> {
     let token = get_firebase_token(&req);
 
     let token = token.context("No token found")?;
 
-    let reseller = check_authorization(
-        api_key.api_key.to_string(),
-        token.to_string(),
-        &db,
-        &cloud_function,
-    )
-    .await?;
+    let reseller = check_authorization(api_key.api_key.to_string(), token.to_string(), &db).await?;
 
     let product = get_product(&db, *id, &reseller)
         .await

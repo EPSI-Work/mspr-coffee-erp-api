@@ -1,4 +1,2 @@
 application:
   host: 0.0.0.0
-cloudfunction:
-  host: localhost:10000

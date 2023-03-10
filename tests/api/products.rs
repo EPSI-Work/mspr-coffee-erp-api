@@ -1,16 +1,12 @@
 use crate::helpers::spawn_app;
+use base64::encode;
 use chrono::prelude::*;
+use erp_api::entity::FirebaseUser;
 use erp_api::entity::PaginationResponse;
 use erp_api::entity::Product;
-use erp_api::routes::FirebaseUser;
-use erp_api::routes::VerifyFirebaseToken;
 use fake::Fake;
 use fake::Faker;
 use uuid::Uuid;
-use wiremock::matchers::method;
-use wiremock::matchers::path;
-use wiremock::Mock;
-use wiremock::ResponseTemplate;
 
 #[tokio::test]
 async fn get_products_empty() {
@@ -18,23 +14,16 @@ async fn get_products_empty() {
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, _) = app.setup_database(0).await;
 
-    let firebase_token = VerifyFirebaseToken {
-        firebase_token: "dsfsdf".to_string(),
-    };
-
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
 
-    Mock::given(path("/auth/v1/verifyToken"))
-        .and(method("POST"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
-        .mount(&app.cloud_function_server)
-        .await;
+    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
+    let firebase_user = encode(&firebase_user);
 
     // Act
     let response = app
-        .get_products(1, 10, reseller_firestore.api_key, firebase_token)
+        .get_products(1, 10, reseller_firestore.api_key, firebase_user)
         .await;
 
     // Assert
@@ -48,22 +37,17 @@ async fn get_products() {
     // Arrange
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, products_firestore) = app.setup_database(2).await;
-    let firebase_token = VerifyFirebaseToken {
-        firebase_token: "dsfsdf".to_string(),
-    };
+
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
 
-    Mock::given(path("/auth/v1/verifyToken"))
-        .and(method("POST"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
-        .mount(&app.cloud_function_server)
-        .await;
+    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
+    let firebase_user = encode(&firebase_user);
 
     // Act
     let response = app
-        .get_products(1, 10, reseller_firestore.api_key, firebase_token)
+        .get_products(1, 10, reseller_firestore.api_key, firebase_user)
         .await;
 
     // Assert
@@ -84,27 +68,22 @@ async fn get_one_product() {
     // Arrange
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, products_firestore) = app.setup_database(1).await;
-    let firebase_token = VerifyFirebaseToken {
-        firebase_token: "dsfsdf".to_string(),
-    };
-    let mut product = products_firestore[0].clone();
-    dbg!(&product);
+
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
 
-    Mock::given(path("/auth/v1/verifyToken"))
-        .and(method("POST"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
-        .mount(&app.cloud_function_server)
-        .await;
+    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
+    let firebase_user = encode(&firebase_user);
+
+    let mut product = products_firestore[0].clone();
 
     // Act
     let response = app
         .get_product(
             product.id.to_string(),
             reseller_firestore.api_key,
-            firebase_token,
+            firebase_user,
         )
         .await;
 
@@ -125,25 +104,20 @@ async fn get_one_product_not_found() {
     // Arrange
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, _) = app.setup_database(0).await;
-    let firebase_token = VerifyFirebaseToken {
-        firebase_token: "dsfsdf".to_string(),
-    };
+
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
 
-    Mock::given(path("/auth/v1/verifyToken"))
-        .and(method("POST"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
-        .mount(&app.cloud_function_server)
-        .await;
+    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
+    let firebase_user = encode(&firebase_user);
 
     // Act
     let response = app
         .get_product(
             Uuid::new_v4().to_string(),
             reseller_firestore.api_key,
-            firebase_token,
+            firebase_user,
         )
         .await;
 
@@ -162,25 +136,20 @@ async fn get_one_product_no_valid_uuid_provided() {
     // Arrange
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, _) = app.setup_database(0).await;
-    let firebase_token = VerifyFirebaseToken {
-        firebase_token: "dsfsdf".to_string(),
-    };
+
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
 
-    Mock::given(path("/auth/v1/verifyToken"))
-        .and(method("POST"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(firebase_user))
-        .mount(&app.cloud_function_server)
-        .await;
+    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
+    let firebase_user = encode(&firebase_user);
 
     // Act
     let response = app
         .get_product(
             "156e0b6c-3eb1-46a2-8a23-48a1251ef34143".to_string(),
             reseller_firestore.api_key,
-            firebase_token,
+            firebase_user,
         )
         .await;
 

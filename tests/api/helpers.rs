@@ -1,6 +1,5 @@
 use erp_api::configuration::get_configuration;
 use erp_api::entity::{Product, Reseller, User};
-use erp_api::routes::VerifyFirebaseToken;
 use erp_api::startup::Application;
 use erp_api::telemetry::{get_subscriber_without_elk, init_subscriber};
 use fake::Fake;
@@ -8,8 +7,6 @@ use fake::Faker;
 use firestore::FirestoreDb;
 use once_cell::sync::Lazy;
 use tracing::Level;
-use wiremock::MockServer;
-
 // Ensure that the `tracing` stack is only initialised once using `once_cell`
 static TRACING: Lazy<()> = Lazy::new(|| {
     let default_filter_level = Level::INFO;
@@ -34,7 +31,6 @@ pub struct TestApp {
     pub address: String,
     pub port: u16,
     pub db: FirestoreDb,
-    pub cloud_function_server: MockServer,
 }
 
 const COLLECTION_PRODUCTS: &str = "products";
@@ -103,14 +99,14 @@ impl TestApp {
         &self,
         id: String,
         api_key: String,
-        firebase_token: VerifyFirebaseToken,
+        base64_firebase_user: String,
     ) -> reqwest::Response {
         reqwest::Client::new()
             .get(&format!(
                 "{}/products/{}?api_key={}",
                 &self.address, id, api_key
             ))
-            .header("x-apigateway-api-userinfo", firebase_token.firebase_token)
+            .header("x-apigateway-api-userinfo", base64_firebase_user)
             .send()
             .await
             .expect("Failed to execute request.")
@@ -121,14 +117,14 @@ impl TestApp {
         page: u64,
         size: u64,
         api_key: String,
-        firebase_token: VerifyFirebaseToken,
+        base64_firebase_user: String,
     ) -> reqwest::Response {
         reqwest::Client::new()
             .get(&format!(
                 "{}/products?page={}&size={}&api_key={}",
                 &self.address, page, size, api_key
             ))
-            .header("x-apigateway-api-userinfo", firebase_token.firebase_token)
+            .header("x-apigateway-api-userinfo", base64_firebase_user)
             .send()
             .await
             .expect("Failed to execute request.")
@@ -141,15 +137,11 @@ pub async fn spawn_app() -> TestApp {
     // All other invocations will instead skip execution.
     Lazy::force(&TRACING);
 
-    // Launch a mock server to stand in for Postmark's API
-    let cloud_function_server = MockServer::start().await;
-
     // Randomise configuration to ensure test isolation
     let configuration = {
         let mut c = get_configuration().expect("Failed to read configuration.");
         // Use a random OS port
         c.application.port = 0;
-        c.cloudfunction.host = cloud_function_server.uri().into();
         c
     };
 
@@ -167,6 +159,5 @@ pub async fn spawn_app() -> TestApp {
         address,
         port: application_port,
         db: firestore_database,
-        cloud_function_server,
     }
 }

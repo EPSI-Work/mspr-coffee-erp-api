@@ -20,11 +20,6 @@ pub struct Application {
     db: FirestoreDb,
 }
 
-#[derive(Debug, Clone)]
-pub struct CloudFunction {
-    pub host: String,
-}
-
 impl Application {
     pub async fn build(configuration: Settings) -> Result<Self, std::io::Error> {
         let address = format!(
@@ -46,11 +41,7 @@ impl Application {
             .await
             .expect("Failed to setup firebase connection");
 
-        let cloud_function = CloudFunction {
-            host: configuration.cloudfunction.host.expose_secret().clone(),
-        };
-
-        let server = run(listener, db.clone(), cloud_function)?;
+        let server = run(listener, db.clone())?;
 
         // We "save" the bound port in one of `Application`'s fields
         Ok(Self { port, server, db })
@@ -74,13 +65,8 @@ impl Application {
 // Notice the different signature!
 // We return `Server` on the happy path and we dropped the `async` keyword
 // We have no .await call, so it is not needed anymore.
-pub fn run(
-    listener: TcpListener,
-    firestore_db: FirestoreDb,
-    cloud_function_host: CloudFunction,
-) -> Result<Server, std::io::Error> {
+pub fn run(listener: TcpListener, firestore_db: FirestoreDb) -> Result<Server, std::io::Error> {
     let firestore_connection = Data::new(firestore_db);
-    let cloud_function = Data::new(cloud_function_host);
 
     let server = HttpServer::new(move || {
         App::new()
@@ -89,7 +75,6 @@ pub fn run(
             .route("/products", web::get().to(products))
             .route("/health_check", web::get().to(health_check))
             .app_data(firestore_connection.clone())
-            .app_data(cloud_function.clone())
     })
     .listen(listener)?
     .run();

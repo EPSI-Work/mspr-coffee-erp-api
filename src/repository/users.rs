@@ -1,4 +1,5 @@
 use crate::entity::{Reseller, User};
+use crate::repository::COLLECTION_NAME_RESELLERS;
 use firestore::errors::FirestoreError;
 use firestore::struct_path::path;
 use firestore::FirestoreDb;
@@ -12,7 +13,7 @@ pub async fn get_user(
     firebase_id: &String,
     reseller: &Reseller,
 ) -> Result<Option<User>, FirestoreError> {
-    let parent_path = db.parent_path("resellers", reseller.id.to_string())?;
+    let parent_path = db.parent_path(COLLECTION_NAME_RESELLERS, reseller.id.to_string())?;
 
     let users: BoxStream<User> = db
         .fluent()

@@ -21,7 +21,7 @@ GCP_SERVICE_ACCOUNT_KEY, GCP_PROJECT_ID and FIREBASE_ADMIN_KEY
 
 lock branch main
 
-
+export FIRESTORE_EMULATOR_HOST=localhost:8080
 firebase emulators:exec --project mspr-epsi-coffee 'cargo test'
 firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 50'
 

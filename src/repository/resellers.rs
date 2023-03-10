@@ -5,7 +5,7 @@ use firestore::FirestoreDb;
 use futures::stream::BoxStream;
 use futures::StreamExt;
 
-const COLLECTION_NAME: &str = "resellers";
+pub const COLLECTION_NAME_RESELLERS: &str = "resellers";
 
 pub async fn get_reseller(
     db: &FirestoreDb,
@@ -14,7 +14,7 @@ pub async fn get_reseller(
     let reseller: BoxStream<Reseller> = db
         .fluent()
         .select()
-        .from(COLLECTION_NAME)
+        .from(COLLECTION_NAME_RESELLERS)
         .filter(|q| q.for_all([q.field(path!(Reseller::api_key)).eq(api_key)]))
         .obj()
         .stream_query()

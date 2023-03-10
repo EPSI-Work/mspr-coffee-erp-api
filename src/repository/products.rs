@@ -1,4 +1,5 @@
 use crate::entity::{Product, Reseller};
+use crate::repository::COLLECTION_NAME_RESELLERS;
 use firestore::errors::FirestoreError;
 use firestore::FirestoreDb;
 use firestore::*;
@@ -12,7 +13,7 @@ pub async fn get_products(
     db: &FirestoreDb,
     reseller: &Reseller,
 ) -> Result<Vec<Product>, FirestoreError> {
-    let parent_path = db.parent_path("resellers", reseller.id.to_string())?;
+    let parent_path = db.parent_path(COLLECTION_NAME_RESELLERS, reseller.id.to_string())?;
 
     // add limit and offset
     let products_return: BoxStream<Product> = db
