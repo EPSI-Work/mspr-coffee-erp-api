@@ -61,9 +61,12 @@ async fn check_authorization(
     db: &FirestoreDb,
     cloud_function: &CloudFunction,
 ) -> Result<Reseller, anyhow::Error> {
+    tracing::info!(token);
+
     let firebase_credentials = VerifyFirebaseToken {
         firebase_token: token,
     };
+
     // verify firebase token
     let response = reqwest::Client::new()
         .post(format!("{}/auth/v1/verifyToken", cloud_function.host))
@@ -113,6 +116,8 @@ pub async fn products(
     let token = get_firebase_token(&req);
 
     let token = token.context("No token found")?;
+
+    tracing::info!(token);
 
     let reseller = check_authorization(
         api_key.api_key.to_string(),
