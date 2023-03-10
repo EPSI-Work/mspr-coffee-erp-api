@@ -8,6 +8,7 @@ use actix_web::http::header::ContentType;
 use actix_web::HttpRequest;
 use actix_web::{web, HttpResponse};
 use anyhow::Context;
+use base64::decode;
 use fake::{Dummy, Fake};
 use firestore::*;
 use serde::{Deserialize, Serialize};
@@ -15,20 +16,16 @@ use serde_json::{json, to_string};
 use tracing_actix_web::RequestId;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug, Dummy)]
-pub struct FirebaseUser {
-    pub user: User,
-}
+// #[derive(Serialize, Deserialize, Debug, Dummy)]
+// pub struct FirebaseUser {
+//     pub user: User,
+// }
 
 #[derive(Serialize, Deserialize, Debug, Dummy)]
-pub struct User {
-    pub uid: String,
+pub struct FirebaseUser {
+    pub user_id: String,
     pub email: String,
-    #[serde(rename = "emailVerified")]
     pub email_verified: bool,
-    pub disabled: bool,
-    #[serde(rename = "tokensValidAfterTime")]
-    pub tokens_valid_after_time: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -63,33 +60,40 @@ async fn check_authorization(
 ) -> Result<Reseller, anyhow::Error> {
     tracing::info!(token);
 
-    let firebase_credentials = VerifyFirebaseToken {
-        firebase_token: token,
-    };
+    // let firebase_credentials = VerifyFirebaseToken {
+    //     firebase_token: token,
+    // };
 
-    let path = format!("{}/auth/v1/verifyToken", cloud_function.host);
+    // let path = format!("{}/auth/v1/verifyToken", cloud_function.host);
 
-    tracing::info!(path);
+    // tracing::info!(path);
 
-    // verify firebase token
-    let response = reqwest::Client::new()
-        .post(path)
-        .json(&firebase_credentials)
-        .send()
-        .await
-        .context("Failed to verify firebase token")?;
+    // // verify firebase token
+    // let response = reqwest::Client::new()
+    //     .post(path)
+    //     .json(&firebase_credentials)
+    //     .send()
+    //     .await
+    //     .context("Failed to verify firebase token")?;
 
-    dbg!(&response);
+    // dbg!(&response);
 
-    let body = response
-        .text()
-        .await
-        .context("Failed to get body from firebase token")?;
+    // let body = response
+    //     .text()
+    //     .await
+    //     .context("Failed to get body from firebase token")?;
 
-    tracing::info!(body);
+    // tracing::info!(body);
 
+    let decoded_bytes = decode(&token).context("Impossible de décoder la chaîne Base64")?; // Décodage de la chaîne Base64
+
+    let decoded_string =
+        String::from_utf8(decoded_bytes).context("Les octets décodés ne sont pas valides UTF-8")?;
+
+    dbg!(&token);
+    dbg!(&decoded_string);
     let firebase_user =
-        serde_json::from_str::<FirebaseUser>(&body).context("Failed to parse json")?;
+        serde_json::from_str::<FirebaseUser>(&decoded_string).context("Failed to parse json")?;
 
     // check if the reseller with the given api key exist
     let reseller = get_reseller(&db, &api_key)
@@ -99,7 +103,7 @@ async fn check_authorization(
     let reseller = reseller.context("No reseller found")?;
 
     // check if the user has a reseller
-    let user = get_user(&db, &firebase_user.user.uid, &reseller)
+    let user = get_user(&db, &firebase_user.user_id, &reseller)
         .await
         .context("Failed to get products from database.")?;
 

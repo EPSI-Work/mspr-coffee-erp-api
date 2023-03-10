@@ -24,7 +24,7 @@ async fn get_products_empty() {
 
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
-    firebase_user.user.uid = user_firestore.firebase_id;
+    firebase_user.user_id = user_firestore.firebase_id;
 
     Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
@@ -53,7 +53,7 @@ async fn get_products() {
     };
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
-    firebase_user.user.uid = user_firestore.firebase_id;
+    firebase_user.user_id = user_firestore.firebase_id;
 
     Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
@@ -91,7 +91,7 @@ async fn get_one_product() {
     dbg!(&product);
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
-    firebase_user.user.uid = user_firestore.firebase_id;
+    firebase_user.user_id = user_firestore.firebase_id;
 
     Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
@@ -130,7 +130,7 @@ async fn get_one_product_not_found() {
     };
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
-    firebase_user.user.uid = user_firestore.firebase_id;
+    firebase_user.user_id = user_firestore.firebase_id;
 
     Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
@@ -167,7 +167,7 @@ async fn get_one_product_no_valid_uuid_provided() {
     };
     // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
-    firebase_user.user.uid = user_firestore.firebase_id;
+    firebase_user.user_id = user_firestore.firebase_id;
 
     Mock::given(path("/auth/v1/verifyToken"))
         .and(method("POST"))
