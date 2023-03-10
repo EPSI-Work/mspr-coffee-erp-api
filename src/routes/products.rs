@@ -66,7 +66,7 @@ async fn check_authorization(
     };
     // verify firebase token
     let response = reqwest::Client::new()
-        .post(format!("{}/api/auth/v1/verifyToken", cloud_function.host))
+        .post(format!("{}/auth/v1/verifyToken", cloud_function.host))
         .json(&firebase_credentials)
         .send()
         .await
