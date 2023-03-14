@@ -59,6 +59,12 @@ jobs:
           export APP_FIREBASE__CREDENTIAL=firebase-key.json
           firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --output-dir coverage --fail-under 50'
 
+      - name: Check coverage file
+        run: |
+          ls
+          cd coverage
+          cat cobertura.xml
+
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
         with:
