@@ -1,9 +1,8 @@
+//use crate::entity::{FirebaseUser, PaginationResponse, Product, Reseller};
 use crate::helpers::spawn_app;
 use base64::encode;
 use chrono::prelude::*;
-use erp_api::entity::FirebaseUser;
-use erp_api::entity::PaginationResponse;
-use erp_api::entity::Product;
+use erp_api::entity::{FirebaseUser, PaginationResponse, Product};
 use fake::Fake;
 use fake::Faker;
 use uuid::Uuid;
@@ -14,12 +13,9 @@ async fn get_products_empty() {
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, _) = app.setup_database(0).await;
 
-    // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
-
-    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
-    let firebase_user = encode(&firebase_user);
+    let firebase_user = encode(serde_json::to_vec(&firebase_user).unwrap());
 
     // Act
     let response = app
@@ -38,12 +34,9 @@ async fn get_products() {
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, products_firestore) = app.setup_database(2).await;
 
-    // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
-
-    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
-    let firebase_user = encode(&firebase_user);
+    let firebase_user = encode(serde_json::to_vec(&firebase_user).unwrap());
 
     // Act
     let response = app
@@ -69,12 +62,9 @@ async fn get_one_product() {
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, products_firestore) = app.setup_database(1).await;
 
-    // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
-
-    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
-    let firebase_user = encode(&firebase_user);
+    let firebase_user = encode(serde_json::to_vec(&firebase_user).unwrap());
 
     let mut product = products_firestore[0].clone();
 
@@ -105,12 +95,9 @@ async fn get_one_product_not_found() {
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, _) = app.setup_database(0).await;
 
-    // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
-
-    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
-    let firebase_user = encode(&firebase_user);
+    let firebase_user = encode(serde_json::to_vec(&firebase_user).unwrap());
 
     // Act
     let response = app
@@ -137,12 +124,9 @@ async fn get_one_product_no_valid_uuid_provided() {
     let app = spawn_app().await;
     let (reseller_firestore, user_firestore, _) = app.setup_database(0).await;
 
-    // Make sure the uid return from the mock cloud functions exist in the firestore database
     let mut firebase_user: FirebaseUser = Faker.fake();
     firebase_user.user_id = user_firestore.firebase_id;
-
-    let firebase_user = serde_json::to_vec(&firebase_user).unwrap();
-    let firebase_user = encode(&firebase_user);
+    let firebase_user = encode(serde_json::to_vec(&firebase_user).unwrap());
 
     // Act
     let response = app

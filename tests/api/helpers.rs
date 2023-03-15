@@ -1,3 +1,4 @@
+//use crate::entity::{Product, Reseller, User};
 use erp_api::configuration::get_configuration;
 use erp_api::entity::{Product, Reseller, User};
 use erp_api::startup::Application;
@@ -29,7 +30,6 @@ static TRACING: Lazy<()> = Lazy::new(|| {
 
 pub struct TestApp {
     pub address: String,
-    pub port: u16,
     pub db: FirestoreDb,
 }
 
@@ -149,7 +149,6 @@ pub async fn spawn_app() -> TestApp {
     let application = Application::build(configuration.clone())
         .await
         .expect("Failed to build application.");
-    let application_port = application.port();
     let address = format!("http://127.0.0.1:{}", application.port());
     let firestore_database = application.db();
 
@@ -157,7 +156,6 @@ pub async fn spawn_app() -> TestApp {
     let _ = tokio::spawn(application.run_until_stopped());
     TestApp {
         address,
-        port: application_port,
         db: firestore_database,
     }
 }

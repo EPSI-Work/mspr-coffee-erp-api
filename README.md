@@ -28,7 +28,6 @@ firebase emulators:exec --project mspr-epsi-coffee 'cargo tarpaulin --out Xml --
 
 cargo run --bin erp-import -- --file-path import/import-products.json --firebase-id mspr-epsi-coffee --firebase-token firebase-token/firebase-adminsdk-sa.json
 
-
 security : 
 cargo deny check
 cargo outdated
@@ -36,6 +35,21 @@ cargo udeps
 cargo audit
 cargo pants
 
+|| Tested/Total Lines:
+|| src/configuration.rs: 24/24
+|| src/entity/pagination.rs: 17/17
+|| src/error/api_error.rs: 6/14
+|| src/main.rs: 0/7
+|| src/repository/products.rs: 17/17
+|| src/repository/resellers.rs: 9/10
+|| src/repository/users.rs: 11/12
+|| src/routes/health_check.rs: 2/2
+|| src/routes/products.rs: 52/59
+|| src/startup.rs: 28/28
+|| src/tcp_sink.rs: 7/9
+|| src/telemetry.rs: 13/13
+|| 
+87.74% coverage, 186/212 lines covered
 
 
 
