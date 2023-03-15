@@ -20,6 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: false
+          files: coverage/cobertura.xml
+          verbose: true
+          root_dir: /
+
       - uses: actions/setup-java@v3
         with:
           distribution: "temurin"
@@ -52,13 +60,6 @@ jobs:
           cd coverage
           cat cobertura.xml
 
-      - name: Upload to codecov.io
-        uses: codecov/codecov-action@v3
-        with:
-          fail_ci_if_error: false
-          files: coverage/cobertura.xml
-          verbose: true
-          root_dir: /__w/mspr-coffee-erp-api/mspr-coffee-erp-api
 
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2

@@ -2,7 +2,6 @@
 /firebase-token
 /.vscode
 /logs
-/coverage
 firestore-debug.log
 firebase-debug.log
 ui-debug.log
