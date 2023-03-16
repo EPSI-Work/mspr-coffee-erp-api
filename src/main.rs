@@ -1,7 +1,7 @@
 use erp_api::{
     configuration::get_configuration,
+    observability::{get_subscriber_without_elk, init_subscriber},
     startup::Application,
-    telemetry::{get_subscriber_without_elk, init_subscriber},
 };
 use tracing::Level;
 

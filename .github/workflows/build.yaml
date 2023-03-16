@@ -7,15 +7,15 @@ on:
     #branches: [main]
 
 env:
-  RUST_VERSION: 1.67
+  RUST_VERSION: 1.68
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    container:
-      image: xd009642/tarpaulin:0.25.0-slim
-      options: --security-opt seccomp=unconfined
+    # container:
+    #   image: xd009642/tarpaulin:0.25.0-slim
+    #   options: --security-opt seccomp=unconfined
 
     steps:
       - uses: actions/checkout@v3
@@ -39,6 +39,9 @@ jobs:
         shell: bash
         env:
           FIREBASE_ADMIN_KEY: ${{secrets.FIREBASE_ADMIN_KEY}}
+
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
 
       - name: Run test
         run: |

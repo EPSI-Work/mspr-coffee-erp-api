@@ -1,8 +1,8 @@
 //use crate::entity::{Product, Reseller, User};
 use erp_api::configuration::get_configuration;
 use erp_api::entity::{Product, Reseller, User};
+use erp_api::observability::{get_subscriber_without_elk, init_subscriber};
 use erp_api::startup::Application;
-use erp_api::telemetry::{get_subscriber_without_elk, init_subscriber};
 use fake::Fake;
 use fake::Faker;
 use firestore::FirestoreDb;

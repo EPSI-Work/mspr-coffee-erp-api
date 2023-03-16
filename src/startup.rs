@@ -13,7 +13,6 @@ use std::env::set_var;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
 
-// A new type to hold the newly built server and its port
 pub struct Application {
     port: u16,
     server: Server,
@@ -43,7 +42,6 @@ impl Application {
 
         let server = run(listener, db.clone())?;
 
-        // We "save" the bound port in one of `Application`'s fields
         Ok(Self { port, server, db })
     }
 
@@ -55,16 +53,11 @@ impl Application {
         self.port
     }
 
-    // A more expressive name that makes it clear that
-    // this function only returns when the application is stopped.
     pub async fn run_until_stopped(self) -> Result<(), std::io::Error> {
         self.server.await
     }
 }
 
-// Notice the different signature!
-// We return `Server` on the happy path and we dropped the `async` keyword
-// We have no .await call, so it is not needed anymore.
 pub fn run(listener: TcpListener, firestore_db: FirestoreDb) -> Result<Server, std::io::Error> {
     let firestore_connection = Data::new(firestore_db);
 

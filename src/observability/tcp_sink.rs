@@ -49,7 +49,7 @@ mod tests {
             assert_eq!(String::from_utf8_lossy(&buffer[..bytes_read]), "hello");
         });
 
-        let mut client = TcpWriter::new(format!("127.0.0.1:{}", port)).unwrap();
+        let client = TcpWriter::new(format!("127.0.0.1:{}", port)).unwrap();
         let mut client = client.clone();
         client.write(b"hello").unwrap();
         client.flush().unwrap();

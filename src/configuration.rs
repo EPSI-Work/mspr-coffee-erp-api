@@ -33,15 +33,15 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     let mut settings = config::Config::default();
     let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let configuration_directory = base_path.join("configuration");
-    // Read the "default" configuration file, panick if not found
+
     settings.merge(config::File::from(configuration_directory.join("base")).required(true))?;
-    // Detect the running environment, Default to `local` if unspecified.
+
     let environment: Environment = std::env::var("APP_ENVIRONMENT")
         .unwrap_or_else(|_| "local".into())
         .try_into()
         .expect("Failed to parse APP_ENVIRONMENT.");
 
-    // Layer on the environment-specific values, ovverride value if they were set before.
+    // Layer on the environment-specific values, override value if they were set before.
     settings.merge(
         config::File::from(configuration_directory.join(environment.as_str())).required(true),
     )?;
@@ -54,7 +54,6 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     settings.try_into()
 }
 
-/// The possible runtime environment for our application.
 #[derive(PartialEq, Debug)]
 pub enum Environment {
     Local,
@@ -70,7 +69,6 @@ impl Environment {
     }
 }
 
-// if we implement tryform, tryinto is automatically available to use
 impl TryFrom<String> for Environment {
     type Error = String;
     fn try_from(s: String) -> Result<Self, Self::Error> {

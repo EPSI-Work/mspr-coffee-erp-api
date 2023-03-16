@@ -1,6 +1,3 @@
-use crate::tcp_sink::TcpWriter;
-use std::sync::Arc;
-use std::sync::Mutex;
 use tracing::subscriber::set_global_default;
 use tracing::Level;
 use tracing::Subscriber;
@@ -81,12 +78,7 @@ where
         .with(file_layer)
 }
 
-/// Register a subscriber as global default to process span data.
-///
-/// It should only be called once!
 pub fn init_subscriber(subscriber: impl Subscriber + Send + Sync) {
-    // Redirect all `log`'s events to our subscriber
     LogTracer::init().expect("Failed to set logger");
-    // Use this subscriber as the default for the entire program
     set_global_default(subscriber).expect("Failed to set subscriber");
 }

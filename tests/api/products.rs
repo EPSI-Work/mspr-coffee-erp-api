@@ -29,7 +29,7 @@ async fn get_products_empty() {
 }
 
 #[tokio::test]
-async fn get_products_error_cases() {
+async fn get_products_auth_error_cases() {
     // Arrange
     // we just need the reseller_firestore for the last test
     let app = spawn_app().await;
