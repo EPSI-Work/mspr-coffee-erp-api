@@ -15,7 +15,7 @@ impl ResponseError for APIError {
     fn error_response(&self) -> HttpResponse {
         match self {
             APIError::UnexpectedError(_) => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
-            APIError::AuthorizationError(_, error_message) => HttpResponse::Ok()
+            APIError::AuthorizationError(_, error_message) => HttpResponse::Unauthorized()
                 .content_type(ContentType::json())
                 .body(json!({"message": error_message.to_owned()}).to_string()),
         }
@@ -66,7 +66,7 @@ mod tests {
         );
 
         let response = error.error_response();
-        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
         assert_eq!(
             response.headers().get(CONTENT_TYPE).unwrap(),
             "application/json"

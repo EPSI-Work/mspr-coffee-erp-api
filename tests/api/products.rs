@@ -29,6 +29,75 @@ async fn get_products_empty() {
 }
 
 #[tokio::test]
+async fn get_products_error_cases() {
+    // Arrange
+    // we just need the reseller_firestore for the last test
+    let app = spawn_app().await;
+    let (reseller_firestore, _, _) = app.setup_database(0).await;
+
+    struct TestCase<'a> {
+        name: &'a str,
+        api_key: String,
+        firebase_user: String,
+        expected_error_message: &'a str,
+    }
+
+    let firebase_user_not_existing: FirebaseUser = Faker.fake();
+    let firebase_user_not_existing_str =
+        encode(serde_json::to_vec(&firebase_user_not_existing).unwrap());
+
+    let test_cases = [
+        TestCase {
+            name: "firebase user : base64 decode error",
+            api_key: Uuid::new_v4().to_string(),
+            firebase_user: "=========".to_string(),
+            expected_error_message: "base64",
+        },
+        TestCase {
+            name: "firebase user : utf8 decode error",
+            api_key: Uuid::new_v4().to_string(),
+            firebase_user: "AJoSmg==".to_string(),
+            expected_error_message: "UTF-8",
+        },
+        TestCase {
+            name: "firebase user : failed parsing",
+            api_key: Uuid::new_v4().to_string(),
+            firebase_user: "ewogICJpc3MiOiAiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL21zcHItZXBzaS1jb2ZmZWUiLAogICJhdWQiOiAibXNwci1lcHNpLWNvZmZlZSIsCiAgImF1dGhfdGltZSI6IDE2Nzg5NTg3MjgsCn0=".to_string(),
+            expected_error_message: "Failed to parse firebase json",
+        },
+        TestCase {
+            name: "reseller not found",
+            api_key: Uuid::new_v4().to_string(),
+            firebase_user: firebase_user_not_existing_str.clone(),
+            expected_error_message: "No reseller found",
+        },
+        TestCase {
+            name: "user not found",
+            api_key: reseller_firestore.api_key,
+            firebase_user: firebase_user_not_existing_str,
+            expected_error_message: "No user found",
+        },
+    ];
+
+    for test_case in test_cases {
+        // Act
+        let response = app
+            .get_products(
+                1,
+                10,
+                test_case.api_key.clone(),
+                test_case.firebase_user.clone(),
+            )
+            .await;
+
+        // Assert
+        assert_eq!(response.status(), 401, "{}", test_case.name);
+        let body = response.text().await.expect("Failed to get body");
+        assert_eq!(true, body.contains(test_case.expected_error_message));
+    }
+}
+
+#[tokio::test]
 async fn get_products() {
     // Arrange
     let app = spawn_app().await;

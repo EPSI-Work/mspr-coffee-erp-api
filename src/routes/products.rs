@@ -39,9 +39,9 @@ async fn check_authorization(
     db: &FirestoreDb,
 ) -> Result<Reseller, APIError> {
     let decoded_bytes = decode(&token)
-        .context("Impossible de décoder la chaîne Base64")
+        .context("Impossible de décoder la chaîne base64")
         .map_err(|err| {
-            APIError::AuthorizationError(err, "Impossible de décoder la chaîne Base64".to_string())
+            APIError::AuthorizationError(err, "Impossible de décoder la chaîne base64".to_string())
         })?; // Décodage de la chaîne Base64
 
     let decoded_string = String::from_utf8(decoded_bytes)
@@ -54,8 +54,10 @@ async fn check_authorization(
         })?;
 
     let firebase_user = serde_json::from_str::<FirebaseUser>(&decoded_string)
-        .context("Failed to parse json")
-        .map_err(|err| APIError::AuthorizationError(err, "Failed to parse json".to_string()))?;
+        .context("Failed to parse firebase json")
+        .map_err(|err| {
+            APIError::AuthorizationError(err, "Failed to parse firebase json".to_string())
+        })?;
 
     // check if the reseller with the given api key exist
     let reseller = get_reseller(&db, &api_key)
