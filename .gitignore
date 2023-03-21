@@ -8,3 +8,10 @@ firestore-debug.log
 firebase-debug.log
 ui-debug.log
 .github/workflows/audit.yaml
+
+# Terraform Files
+**/.terraform
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/key.json

@@ -11,14 +11,14 @@ variable "artifact_repo_id" {
 variable "gcp_region" {
   default = "europe-west9"
 }
+variable "gateway_region" {
+  default = "europe-west2"
+}
 variable "api_id" {
   default = "api-erp"
 }
 variable "api_config_id" {
   default = "config-gateway"
-}
-variable "gateway_id" {
-  default = "gateway-erp"
 }
 variable "gateway_sa" {
   default = "gateway-sa"
