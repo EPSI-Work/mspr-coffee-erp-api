@@ -25,49 +25,40 @@ provider "google-beta" {
   region  = var.gcp_region
 }
 
-# Enabling API
-resource "google_project_service" "enable_api_gateway" {
-  project  = var.project_id
-  service  = "apigateway.googleapis.com"
+resource "null_resource" "enable_service_usage_api" {
+  provisioner "local-exec" {
+    command = "gcloud services enable serviceusage.googleapis.com cloudresourcemanager.googleapis.com --project ${var.project_id}"
+  }
+
 }
 
-resource "google_project_service" "enable_service_management" {
-  project  = var.project_id
-  service  = "servicemanagement.googleapis.com"
+# Wait for the new configuration to propagate
+# (might be redundant)
+resource "time_sleep" "wait_project_init" {
+  create_duration = "60s"
+
+  depends_on = [null_resource.enable_service_usage_api]
 }
 
-resource "google_project_service" "enable_iam" {
-  project  = var.project_id
-  service  = "iam.googleapis.com"
+variable "gcp_service_list" {
+  description = "The list of apis necessary for the project"
+  type        = list(string)
+  default = [
+    "apigateway.googleapis.com",
+    "servicemanagement.googleapis.com",
+    "iam.googleapis.com",
+    "artifactregistry.googleapis.com",
+    "apigateway.googleapis.com",
+    "servicecontrol.googleapis.com",
+    "cloudapis.googleapis.com",
+    "apikeys.googleapis.com"
+  ]
 }
 
-resource "google_project_service" "enable_artifactregistry" {
+resource "google_project_service" "gcp_services" {
+  for_each = toset(var.gcp_service_list)
   project  = var.project_id
-  service  = "artifactregistry.googleapis.com"
+  service  = each.key
 }
 
-resource "google_project_service" "enable_apigateway" {
-  project  = var.project_id
-  service  = "apigateway.googleapis.com"
-}
-
-resource "google_project_service" "enable_servicecontrol" {
-  project  = var.project_id
-  service  = "servicecontrol.googleapis.com"
-}
-
-resource "google_project_service" "enable_serviceusage" {
-  project  = var.project_id
-  service  = "serviceusage.googleapis.com"
-}
-
-resource "google_project_service" "enable_cloudapis" {
-  project  = var.project_id
-  service  = "cloudapis.googleapis.com"
-}
-
-resource "google_project_service" "enable_api_keys" {
-  provider = google-beta
-  project  = var.project_id
-  service  = "apikeys.googleapis.com"
-}
+#  "serviceusage.googleapis.com",
