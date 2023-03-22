@@ -25,25 +25,11 @@ provider "google-beta" {
   region  = var.gcp_region
 }
 
-resource "null_resource" "enable_service_usage_api" {
-  provisioner "local-exec" {
-    command = "gcloud services enable serviceusage.googleapis.com cloudresourcemanager.googleapis.com --project ${var.project_id}"
-  }
+module "enable_apis" {
+  source = "../modules/apis"
 
-}
-
-# Wait for the new configuration to propagate
-# (might be redundant)
-resource "time_sleep" "wait_project_init" {
-  create_duration = "60s"
-
-  depends_on = [null_resource.enable_service_usage_api]
-}
-
-variable "gcp_service_list" {
-  description = "The list of apis necessary for the project"
-  type        = list(string)
-  default = [
+  project_id = var.project_id
+  gcp_service_list = [
     "apigateway.googleapis.com",
     "servicemanagement.googleapis.com",
     "iam.googleapis.com",
@@ -55,10 +41,15 @@ variable "gcp_service_list" {
   ]
 }
 
-resource "google_project_service" "gcp_services" {
-  for_each = toset(var.gcp_service_list)
-  project  = var.project_id
-  service  = each.key
-}
+module "build_infra" {
+  source = "../modules/ressources"
 
-#  "serviceusage.googleapis.com",
+  project_id = var.project_id
+  service_account_email = var.service_account_email
+
+  artifact_repo_id = var.artifact_repo_id
+  api_id = var.api_id
+  api_config_id = var.api_config_id
+  openapi_file = var.openapi_file
+  cloud_run_id = var.cloud_run_id
+}

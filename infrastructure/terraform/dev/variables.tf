@@ -50,6 +50,12 @@ variable "gateway_sa" {
   default = "gateway-sa"
 }
 
+variable "openapi_file" {
+  type = string
+  description = "The path of the openapi file used by the API Gateway."
+  default = "openapi.yaml"
+}
+
 variable "github_action_sa" {
   type = string
   description = "The name of the service account used by the GitHub Actions workflow."
