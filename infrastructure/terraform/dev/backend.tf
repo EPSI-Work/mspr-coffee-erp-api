@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "terraform_state_a218357f-f46a-4636-b7ab-7db30f28b628"
+    bucket = "terraform-state-5f96fc31-b260-40fc-8244-d3f208c41722"
     prefix = "terraform/state/dev"
     credentials = "key.json"
   }

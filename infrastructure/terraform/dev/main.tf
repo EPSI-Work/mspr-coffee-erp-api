@@ -25,22 +25,6 @@ provider "google-beta" {
   region  = var.gcp_region
 }
 
-module "enable_apis" {
-  source = "../modules/apis"
-
-  project_id = var.project_id
-  gcp_service_list = [
-    "apigateway.googleapis.com",
-    "servicemanagement.googleapis.com",
-    "iam.googleapis.com",
-    "artifactregistry.googleapis.com",
-    "apigateway.googleapis.com",
-    "servicecontrol.googleapis.com",
-    "cloudapis.googleapis.com",
-    "apikeys.googleapis.com"
-  ]
-}
-
 module "build_infra" {
   source = "../modules/ressources"
 
