@@ -9,6 +9,7 @@ use uuid::Uuid;
 pub struct Product {
     pub id: Uuid,
     pub name: String,
+    pub subtitle: String,
     pub details: Option<Detail>,
     pub stock: i64,
     #[serde(with = "firestore::serialize_as_timestamp")]
