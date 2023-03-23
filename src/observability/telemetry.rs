@@ -60,7 +60,7 @@ use tracing_subscriber::Registry;
 //         .with(elk_layer)
 // }
 
-pub fn get_subscriber_without_elk<Sink>(
+pub fn get_subscriber<Sink>(
     name: String,
     env_filter: Level,
     sink: Sink,
@@ -70,12 +70,12 @@ where
 {
     let env_filter =
         EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(env_filter.as_str()));
-    let file_layer = BunyanFormattingLayer::new(name, sink);
+    let sink_layer = BunyanFormattingLayer::new(name, sink);
 
     Registry::default()
         .with(env_filter)
         .with(JsonStorageLayer)
-        .with(file_layer)
+        .with(sink_layer)
 }
 
 pub fn init_subscriber(subscriber: impl Subscriber + Send + Sync) {

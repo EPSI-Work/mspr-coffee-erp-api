@@ -11,14 +11,6 @@ path = "src/lib.rs"
 path = "src/main.rs"
 name = "erp"
 
-# [[bin]]
-# path = "src/cli/main.rs"
-# name = "erp-import"
-
-# [[bench]]
-# name = "http_bench"
-# harness = false
-
 [dev-dependencies]
 tokio = { version = "1.25.0", features = ["rt", "macros"] }
 uuid = { version = "1.3.0", features = ["v4"] }
@@ -50,4 +42,3 @@ rand = "0.8"
 chrono = { version = "0.4.24", default-features = false, features = ["serde"] }
 base64 = "0.13.0"
 fake = { version = "2.2", features=['derive', 'chrono', 'uuid']}
-clap = { version = "4.1.6", features = ["derive"] }

@@ -1,7 +1,7 @@
 //use crate::entity::{Product, Reseller, User};
 use erp_api::configuration::get_configuration;
 use erp_api::entity::{Product, Reseller, User};
-use erp_api::observability::{get_subscriber_without_elk, init_subscriber};
+use erp_api::observability::{get_subscriber, init_subscriber};
 use erp_api::startup::Application;
 use fake::Fake;
 use fake::Faker;
@@ -18,12 +18,10 @@ static TRACING: Lazy<()> = Lazy::new(|| {
     //therefore they are not the same type.
     // We could work around it, but this is the most straight-forward way of moving forward.
     if std::env::var("TEST_LOG").is_ok() {
-        let subscriber =
-            get_subscriber_without_elk(subscriber_name, default_filter_level, std::io::stdout);
+        let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::stdout);
         init_subscriber(subscriber);
     } else {
-        let subscriber =
-            get_subscriber_without_elk(subscriber_name, default_filter_level, std::io::sink);
+        let subscriber = get_subscriber(subscriber_name, default_filter_level, std::io::sink);
         init_subscriber(subscriber);
     };
 });
