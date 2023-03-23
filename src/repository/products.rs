@@ -19,7 +19,7 @@ pub async fn get_products(
     let products_return: BoxStream<Product> = db
         .fluent()
         .select()
-        .fields(paths!(Product::{id, name, stock, created_at}))
+        .fields(paths!(Product::{id, name, stock, created_at, subtitle}))
         .from(COLLECTION_NAME)
         .parent(parent_path)
         .obj()

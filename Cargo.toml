@@ -11,9 +11,9 @@ path = "src/lib.rs"
 path = "src/main.rs"
 name = "erp"
 
-[[bin]]
-path = "src/cli/main.rs"
-name = "erp-import"
+# [[bin]]
+# path = "src/cli/main.rs"
+# name = "erp-import"
 
 # [[bench]]
 # name = "http_bench"
