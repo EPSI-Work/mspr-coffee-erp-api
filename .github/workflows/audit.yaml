@@ -1,0 +1,46 @@
+name: Security audit
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    paths:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - name: Deny check
+      run: cargo deny check
+
+    - name: Outdated
+      run: cargo outdated
+
+    - name: Nightly udeps
+      run: cargo +nightly udeps
+
+    - name: Audit
+      run: cargo audit
+
+    - name: Pants
+      run: cargo pants

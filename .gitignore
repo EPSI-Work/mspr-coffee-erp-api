@@ -1,15 +1,16 @@
-/target
-/firebase-token
-/.vscode
-/logs
 /coverage
-/infrastucture/terraform/test/key.json
+/target
+
+# IDE
+/.vscode
+
+# Firestore
+/firebase-token
 firestore-debug.log
 firebase-debug.log
 ui-debug.log
-.github/workflows/audit.yaml
 
-# Terraform Files
+# Terraform
 **/.terraform
 **/terraform.tfstate
 **/terraform.tfstate.backup
