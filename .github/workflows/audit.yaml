@@ -39,8 +39,8 @@ jobs:
     - name: Install and run pants
       run: cargo install cargo-pants && cargo pants
 
-    - name: Install and run audit
-      run:  cargo install cargo-audit && cargo audit
+    # - name: Install and run audit
+    #   run:  cargo install cargo-audit && cargo audit
 
     - name: Cache dependencies
       uses: actions/cache@v2

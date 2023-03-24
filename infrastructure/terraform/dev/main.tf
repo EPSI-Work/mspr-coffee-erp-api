@@ -37,3 +37,4 @@ module "build_infra" {
   openapi_file = var.openapi_file
   cloud_run_id = var.cloud_run_id
 }
+
