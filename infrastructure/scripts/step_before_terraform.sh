@@ -18,7 +18,8 @@ gcloud services enable serviceusage.googleapis.com \
     apigateway.googleapis.com \
     servicecontrol.googleapis.com \
     cloudapis.googleapis.com \
-    apikeys.googleapis.com
+    apikeys.googleapis.com \
+    run.googleapis.com 
 
 gcloud storage buckets create gs://$BUCKET_NAME --default-storage-class=COLDLINE --location=europe-west9
 
