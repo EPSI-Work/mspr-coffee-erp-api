@@ -41,7 +41,7 @@ variable "api_id" {
 variable "api_config_id" {
   type        = string
   description = "The ID of the API Gateway configuration."
-  default     = "config-gateway"
+  default     = "config-gateway-3"
 }
 
 variable "gateway_sa" {

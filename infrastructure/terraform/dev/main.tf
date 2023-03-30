@@ -32,29 +32,13 @@ module "build_infra" {
   service_account_email = var.service_account_email
 
   artifact_repo_id = var.artifact_repo_id
-  api_id           = var.api_id
-  api_config_id    = var.api_config_id
-  openapi_file     = var.openapi_file
   cloud_run_id     = var.cloud_run_id
 }
 
-resource "google_cloud_run_service" "nginx" {
-  name     = "cloudrun-nginx"
-  location = var.gcp_region
+# module "build_gateway" {
+#   source = "../modules/gateway"
 
-  template {
-    spec {
-      containers {
-        image = "nginx:1.23.3"
-        ports {
-          container_port = 80
-        }
-      }
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-}
+#   api_id           = var.api_id
+#   api_config_id    = var.api_config_id
+#   openapi_file     = var.openapi_file
+# }
